@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { AiOutlineMenu } from "react-icons/ai";
+import { useState } from "react";
 
 const data = [
   {
@@ -20,10 +21,15 @@ const data = [
 
 const Header: React.FC = () => {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
     // Perform logout logic here
     router.push("/login"); // Redirect to login page after logging out
+  };
+
+  const onPress = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -53,19 +59,39 @@ const Header: React.FC = () => {
             </h1>
           </Link>
         ))}
-        <AiOutlineMenu className=" landingDesktop:hidden w-[1.5625rem] h-[1.5625rem] text-black " />
+        <AiOutlineMenu
+          className=" landingDesktop:hidden w-[1.5625rem] h-[1.5625rem] text-black "
+          onClick={onPress}
+        />
       </div>
-      <div className="mobile:w-full landingDesktop:w-[26.25rem] mobile:p-[1.25rem] landingDesktop:p-[0rem] flex mobile:flex-col landingDesktop:flex-row landingDesktop:items-center ">
+      <div className="mobile:w-full landingDesktop:w-[26.25rem] mobile:p-[1.25rem] landingDesktop:p-[0rem] mobile:hidden landingDesktop:flex mobile:flex-col landingDesktop:flex-row landingDesktop:items-center ">
         <h1 className=" landingDesktop:w-[10.875rem] text-center text-black mobile:text-[1.5rem] landingDesktop:text-[2rem] font-medium ">
           Log in
         </h1>
-        <div className=" relative mobile:w-full landingDesktop:w-[16.6875rem] mobile:mt-[0.625rem] landingDesktop:mt-[0rem] ">
-          <div className=" absolute top-2 right-2 mobile:w-full  landingDesktop:w-[16.6875rem] h-[4.4375rem] bg-white rounded-[0.375rem] shadow-md "></div>
-          <button className=" py-[0.6875rem] mobile:w-full  relative  landingDesktop:w-[16.6875rem] rounded-[0.375rem] bg-[#00A7E1] border-[0.0625rem] border-black mobile:text-[1.5rem] landingDesktop:text-[2rem] text-center font-medium text-white shadow-md ">
-            Open account
-          </button>
-        </div>
+        <Link href="/login">
+          <div className=" relative mobile:w-full landingDesktop:w-[16.6875rem] mobile:mt-[0.625rem] landingDesktop:mt-[0rem] ">
+            <div className=" absolute top-2 right-2 mobile:w-full  landingDesktop:w-[16.6875rem] h-[4.4375rem] bg-white rounded-[0.375rem] shadow-md "></div>
+            <button className=" py-[0.6875rem] mobile:w-full  relative  landingDesktop:w-[16.6875rem] rounded-[0.375rem] bg-[#00A7E1] border-[0.0625rem] border-black mobile:text-[1.5rem] landingDesktop:text-[2rem] text-center font-medium text-white shadow-md ">
+              Open account
+            </button>
+          </div>
+        </Link>
       </div>
+      {isOpen && (
+        <div className="mobile:w-full landingDesktop:w-[26.25rem] mobile:p-[1.25rem] landingDesktop:p-[0rem] mobile:flex landingDesktop:hidden mobile:flex-col landingDesktop:flex-row landingDesktop:items-center ">
+          <h1 className=" landingDesktop:w-[10.875rem] text-center text-black mobile:text-[1.5rem] landingDesktop:text-[2rem] font-medium ">
+            Log in
+          </h1>
+          <Link href="/login">
+            <div className=" relative mobile:w-full landingDesktop:w-[16.6875rem] mobile:mt-[0.625rem] landingDesktop:mt-[0rem] ">
+              <div className=" absolute top-2 right-2 mobile:w-full  landingDesktop:w-[16.6875rem] h-[4.4375rem] bg-white rounded-[0.375rem] shadow-md "></div>
+              <button className=" py-[0.6875rem] mobile:w-full  relative  landingDesktop:w-[16.6875rem] rounded-[0.375rem] bg-[#00A7E1] border-[0.0625rem] border-black mobile:text-[1.5rem] landingDesktop:text-[2rem] text-center font-medium text-white shadow-md ">
+                Open account
+              </button>
+            </div>
+          </Link>
+        </div>
+      )}
     </header>
   );
 };
