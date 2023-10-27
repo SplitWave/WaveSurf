@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F4F4F4] font-poppins ">
       <div className=" landingDesktop:py-[1.375rem] ">
-        <h1 className=" text-black text-center  text-[1.25rem] font-light ">
+        <h1 className="mobile:p-[0.375rem] landingDesktop:p-[0rem] text-black text-center mobile:text-[1rem] landingDesktop:text-[1.25rem] font-light ">
           When investing, your capital is at risk and you may get back less than
           invested. Past performance doesn’t guarantee future results.
         </h1>
