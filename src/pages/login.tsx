@@ -5,6 +5,9 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
+import { ReactSVG } from "react-svg";
+import { magic } from "@/lib/magic";
+import { useWeb3 } from "@/context/Web3Context";
 
 const LoginPage = () => {
   const initialValues = {
@@ -13,6 +16,7 @@ const LoginPage = () => {
     password: "",
     rememberMe: false,
   };
+  const { initializeWeb3 } = useWeb3();
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
@@ -26,8 +30,37 @@ const LoginPage = () => {
 
   const [enabled, setEnabled] = useState(false);
 
+  const handleConnect = async () => {
+    try {
+      await magic.oauth.loginWithRedirect({
+        provider: "google",
+        redirectURI: "http://localhost:3000/login",
+        //scope: ["user:email"],
+      });
+    } catch (error) {
+      // Handle error here
+      console.error("OAuth login error:", error);
+    }
+
+    // Get OAuth Redirect Result
+    try {
+      const result = await magic.oauth.getRedirectResult();
+      // Handle the OAuth redirect result here
+      console.log("OAuth redirect result:", result);
+    } catch (error) {
+      // Handle error here
+      console.error("OAuth redirect result error:", error);
+    }
+  };
+
   return (
     <div className=" bg-[#00A7E1] w-full h-full ">
+      <div className=" absolute -top-20 left-1 ">
+        <ReactSVG src="/assets/SVG/bg1.svg" />
+      </div>
+      <div className=" absolute top-40 ">
+        <ReactSVG src="/assets/SVG/bg2.svg" />
+      </div>
       <div className=" w-full  bg-white landingDesktop:py-[0.625rem] ">
         <div className=" flex flex-row items-center landingDesktop:ml-[3.5625rem] ">
           <div className=" relative mobile:w-[3.125rem] mobile:h-[3.125rem] landingDesktop:w-[4rem] landingDesktop:h-[4rem] ">
@@ -43,21 +76,8 @@ const LoginPage = () => {
           </h1>
         </div>
       </div>
-      <div className=" w-full h-full relative py-[6.25rem]  ">
-        <Image
-          src="/assets/PNG/bg1.png"
-          alt=""
-          layout="fill"
-          objectFit="cover"
-        />
-        <Image
-          src="/assets/PNG/bg2.png"
-          alt=""
-          layout="fill"
-          objectFit="cover"
-        />
-
-        <div className=" m-auto landingDesktop:w-[28.25rem]  rounded-[0.9375rem] bg-white shadow-md py-[2rem] ">
+      <div className=" w-full h-full relative py-[6.25rem]">
+        <div className=" m-auto landingDesktop:w-[28.25rem] z-20 rounded-[0.9375rem] bg-white shadow-md py-[2rem] ">
           <h1 className=" font-medium text-[1.125rem] text-center text-gray-700 ">
             Register with
           </h1>
@@ -65,7 +85,10 @@ const LoginPage = () => {
             <div className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center ">
               <FaApple size={31} />
             </div>
-            <div className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center ">
+            <div
+              className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center "
+              onClick={handleConnect}
+            >
               <FaGoogle size={31} />
             </div>
           </div>

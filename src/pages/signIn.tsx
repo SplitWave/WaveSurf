@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
+import { ReactSVG } from "react-svg";
 
 const SignInPage = () => {
   const initialValues = {
@@ -26,6 +27,12 @@ const SignInPage = () => {
 
   return (
     <div className=" bg-[#00A7E1] w-full h-full ">
+      <div className=" absolute -top-20 left-1 ">
+        <ReactSVG src="/assets/SVG/bg1.svg" />
+      </div>
+      <div className=" absolute top-35 ">
+        <ReactSVG src="/assets/SVG/bg2.svg" />
+      </div>
       <div className=" w-full  bg-white landingDesktop:py-[0.625rem] ">
         <div className=" flex flex-row items-center landingDesktop:ml-[3.5625rem] ">
           <div className=" relative mobile:w-[3.125rem] mobile:h-[3.125rem] landingDesktop:w-[4rem] landingDesktop:h-[4rem] ">
@@ -42,19 +49,6 @@ const SignInPage = () => {
         </div>
       </div>
       <div className=" w-full h-full relative py-[6.25rem]  ">
-        <Image
-          src="/assets/PNG/bg1.png"
-          alt=""
-          layout="fill"
-          objectFit="cover"
-        />
-        <Image
-          src="/assets/PNG/bg2.png"
-          alt=""
-          layout="fill"
-          objectFit="cover"
-        />
-
         <div className=" m-auto landingDesktop:w-[28.25rem]  rounded-[0.9375rem] bg-white shadow-md py-[2rem] ">
           <h1 className=" font-medium text-[1.125rem] text-center text-gray-700 ">
             Sign In with
