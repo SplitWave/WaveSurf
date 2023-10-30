@@ -34,7 +34,7 @@ const LoginPage = () => {
     try {
       await magic.oauth.loginWithRedirect({
         provider: "google",
-        redirectURI: "http://localhost:3000/login",
+        redirectURI: "/",
         //scope: ["user:email"],
       });
     } catch (error) {

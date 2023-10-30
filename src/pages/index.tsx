@@ -38,7 +38,7 @@ export default function Home() {
         </div>
 
         <h1 className=" landingDesktop:w-[724px] mobile:mt-[0.9375rem] landingDesktop:mt-0 text-center m-auto text-black mobile:text-[2.5rem] landingDesktop:text-[4rem] font-medium ">
-          Invest as little as £1 with{" "}
+          Invest as little as <span className=" text-[#00A7E1] ">£1</span> with{" "}
           <span className=" text-[#00A7E1] ">Fractional shares</span>
         </h1>
         <h1 className=" mt-[1.375rem] m-auto text-center landingDesktop:w-[49.8125rem] font-normal mobile:text-[1.25rem] landingDesktop:text-[2rem] text-[#605C5C] ">
