@@ -9,14 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chakra-ui/core": "^0.8.0",
-    "@chakra-ui/react": "^2.8.1",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.17",
     "@magic-ext/oauth": "^15.2.0",
     "formik": "^2.4.5",
-    "framer-motion": "^10.16.4",
     "magic-sdk": "^21.2.0",
     "next": "13.5.6",
     "react": "^18",

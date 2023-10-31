@@ -2,14 +2,51 @@ import Image from "next/image";
 import { FaGoogle, FaApple } from "react-icons/fa";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
 import { ReactSVG } from "react-svg";
 import { magic } from "@/lib/magic";
 import { useWeb3 } from "@/context/Web3Context";
+import { MagicUserMetadata } from "magic-sdk";
+import { useRouter } from "next/router";
+
+interface OAuthRedirectResult {
+  oauth: {
+    provider: string;
+
+    scope: string[];
+
+    accessToken: string;
+
+    userHandle: string;
+
+    // `userInfo` contains the OpenID Connect profile information
+
+    // about the user. The schema of this object should match the
+
+    // OpenID spec, except that fields are `camelCased` instead
+
+    // of `snake_cased`.
+
+    // The presence of some fields may differ depending on the
+
+    // specific OAuth provider and the user's own privacy settings.
+
+    // See: https://openid.net/specs/openid-connect-basic-1_0.html#StandardClaims
+
+    userInfo: string;
+  };
+
+  magic: {
+    idToken: string;
+
+    userMetadata: MagicUserMetadata;
+  };
+}
 
 const LoginPage = () => {
+  const router = useRouter();
   const initialValues = {
     name: "",
     email: "",
@@ -30,38 +67,63 @@ const LoginPage = () => {
 
   const [enabled, setEnabled] = useState(false);
 
-  const handleConnect = async () => {
+  // Start the OAuth 2.0 login flow
+  const startOAuthLogin = async () => {
     try {
       await magic.oauth.loginWithRedirect({
         provider: "google",
-        redirectURI: "http://localhost:3000/login",
-        //scope: ["user:email"],
+        redirectURI: "http://localhost:3000/login/",
+        // redirectURI:
+        //   "https://auth.magic.link/v1/oauth2/CndqvnPL2HbSUSI3agyWi9ZMrEIP7EjptWSOHpPmdPE=/callback",
+        //scope: ["userinfo.email"],
       });
     } catch (error) {
       // Handle error here
       console.error("OAuth login error:", error);
     }
+  };
 
-    // Get OAuth Redirect Result
-    try {
-      const result = await magic.oauth.getRedirectResult();
-      // Handle the OAuth redirect result here
-      console.log("OAuth redirect result:", result);
-    } catch (error) {
-      // Handle error here
-      console.error("OAuth redirect result error:", error);
-    }
+  // useEffect(() => {
+  //   const handleOAuthRedirectResult = async () => {
+  //     try {
+  //       const urlParams = new URLSearchParams(window.location.search);
+  //       const provider = urlParams.get("provider");
+  //       const state = urlParams.get("state");
+  //       // Extract other relevant parameters as needed
+
+  //       console.log("OAuth provider:", provider);
+  //       console.log("OAuth state:", state);
+  //       // Log or handle other parameters accordingly
+
+  //       // Clear the URL query parameters after extracting the data
+  //       if (window) {
+  //         window.history.replaceState(
+  //           {},
+  //           document.title,
+  //           router.asPath.split("?")[0]
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("OAuth redirect result error:", error);
+  //     }
+  //   };
+
+  //   handleOAuthRedirectResult();
+  // }, [router]);
+
+  const handleConnect = () => {
+    startOAuthLogin();
   };
 
   return (
     <div className=" bg-[#00A7E1] w-full h-full ">
-      <div className=" absolute -top-20 left-1 ">
+      {/* <div className=" absolute -top-20 left-1 ">
         <ReactSVG src="/assets/SVG/bg1.svg" />
       </div>
       <div className=" absolute top-40 ">
         <ReactSVG src="/assets/SVG/bg2.svg" />
-      </div>
-      <div className=" w-full  bg-white landingDesktop:py-[0.625rem] ">
+      </div> */}
+      <div className=" w-full  bg-white mobile:px-[0.9375rem] mobile:py-[0.625rem] landingDesktop:px-0 landingDesktop:py-[0.625rem] ">
         <div className=" flex flex-row items-center landingDesktop:ml-[3.5625rem] ">
           <div className=" relative mobile:w-[3.125rem] mobile:h-[3.125rem] landingDesktop:w-[4rem] landingDesktop:h-[4rem] ">
             <Image
@@ -77,11 +139,11 @@ const LoginPage = () => {
         </div>
       </div>
       <div className=" w-full h-full relative py-[6.25rem]">
-        <div className=" m-auto landingDesktop:w-[28.25rem] z-20 rounded-[0.9375rem] bg-white shadow-md py-[2rem] ">
+        <div className=" m-auto mobile:w-4/5 landingDesktop:w-[28.25rem] z-20 rounded-[0.9375rem] bg-white shadow-md py-[2rem] mobile:px-[0.9375rem] landingDesktop:px-0 ">
           <h1 className=" font-medium text-[1.125rem] text-center text-gray-700 ">
             Register with
           </h1>
-          <div className=" w-4/5 landingDesktop:mt-[2.1875rem] justify-evenly m-auto flex flex-row items-center ">
+          <div className=" w-4/5 mobile:mt-[0.9375rem] landingDesktop:mt-[2.1875rem] justify-evenly m-auto flex flex-row items-center ">
             <div className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center ">
               <FaApple size={31} />
             </div>
