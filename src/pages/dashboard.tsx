@@ -3,9 +3,8 @@ import ProtectWithAuth from "@/lib/ProtectWithAuth";
 import React from "react";
 import { Tab } from "@headlessui/react";
 import { TbSmartHome, TbChartPie, TbSearch } from "react-icons/tb";
-import { IoNotificationsOutline } from "react-icons/io5";
-import Home from "@/components/dashboard/Home";
 import DashboardHome from "@/components/dashboard/DashboardHome";
+import Image from "next/image";
 
 export function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -17,13 +16,13 @@ function dashboard() {
       <Header />
       <div className=" flex w-full h-full landingDesktop:pl-[2.0625rem] landingDesktop:pt-[2.125rem] landingDesktop:pr-[0.6875rem] ">
         <Tab.Group vertical>
-          <Tab.List className=" flex flex-col w-[7.625rem] p-[1.75rem] items-center h-[28.125rem] rounded-[2.125rem] shadow-md bg-white text-black ">
+          <Tab.List className=" flex flex-col w-[7.625rem] p-[1.75rem] items-center h-[28.125rem] rounded-[2.125rem] shadow-md bg-white text-black font-extralight ">
             <Tab
               className={({ selected }) =>
                 classNames(" focus:outline-none", selected && "text-[#00A7E1]")
               }
             >
-              <TbSmartHome size={64} />
+              <TbSmartHome size={64} style={{ strokeWidth: "1" }} />
             </Tab>
             <Tab
               className={({ selected }) =>
@@ -33,7 +32,7 @@ function dashboard() {
                 )
               }
             >
-              <TbChartPie size={64} />
+              <TbChartPie size={64} style={{ strokeWidth: "1" }} />
             </Tab>
             <Tab
               className={({ selected }) =>
@@ -43,7 +42,7 @@ function dashboard() {
                 )
               }
             >
-              <TbSearch size={64} />
+              <TbSearch size={64} style={{ strokeWidth: "1" }} />
             </Tab>
             <Tab
               className={({ selected }) =>
@@ -53,7 +52,14 @@ function dashboard() {
                 )
               }
             >
-              <IoNotificationsOutline size={64} />
+              <div className=" relative w-[4rem] h-[4rem] ">
+                <Image
+                  src="/assets/PNG/notifications.png"
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
             </Tab>
           </Tab.List>
           <Tab.Panels>

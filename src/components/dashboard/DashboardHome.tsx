@@ -1,12 +1,13 @@
 import React from "react";
 import { Tab } from "@headlessui/react";
 import { classNames } from "@/pages/dashboard";
+import FeaturedFunds from "./FeaturedFunds";
 
 function DashboardHome() {
   return (
     <div className="flex landingDesktop:mx-[1.375rem] mt-[1.375rem] ">
       <Tab.Group>
-        <Tab.List className="flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black text-[1.5rem] font-light ">
+        <Tab.List className="flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black text-[1.25rem] font-light ">
           <Tab
             className={({ selected }) =>
               classNames(
@@ -78,8 +79,10 @@ function DashboardHome() {
             <h1>📂 Create</h1>
           </Tab>
         </Tab.List>
-        <Tab.Panels className="p-6">
-          <Tab.Panel>Content 1</Tab.Panel>
+        <Tab.Panels className="p-3">
+          <Tab.Panel className="relative" as="div">
+            <FeaturedFunds />
+          </Tab.Panel>
           <Tab.Panel>Content 2</Tab.Panel>
           <Tab.Panel>Content 3</Tab.Panel>
           <Tab.Panel>Content 4</Tab.Panel>
@@ -93,3 +96,20 @@ function DashboardHome() {
 }
 
 export default DashboardHome;
+
+{
+  /* {({ selected }) => (
+              <div
+                className={` focus:outline-none landingDesktop:w-[22.5rem] landingDesktop:h-[13.75rem] bg-white ${
+                  selected && "bg-[#F6F6F6]"
+                } `}
+              >
+                <div
+                  className={`h-2/4 w-2 absolute left-0 rounded-r-md top-1/2 transform -translate-y-1/2 ${
+                    selected ? "bg-[#00A7E1]" : ""
+                  }`}
+                ></div>
+                content1
+              </div>
+            )} */
+}
