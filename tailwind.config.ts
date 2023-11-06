@@ -21,6 +21,11 @@ const config: Config = {
         landingDesktop: "1224px",
       },
     },
+    variants: {
+      extend: {
+        outline: ["focus"],
+      },
+    },
   },
   plugins: [],
 };

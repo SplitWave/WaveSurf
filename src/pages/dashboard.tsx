@@ -14,7 +14,7 @@ function dashboard() {
   return (
     <div className=" bg-[#ECE8E8] w-full h-[67.5rem] ">
       <Header />
-      <div className=" flex w-full h-full landingDesktop:pl-[2.0625rem] landingDesktop:pt-[2.125rem] landingDesktop:pr-[0.6875rem] ">
+      <div className=" flex w-full h-full landingDesktop:pl-[2.0625rem] landingDesktop:pt-[2.125rem]  ">
         <Tab.Group vertical>
           <Tab.List className=" flex flex-col w-[7.625rem] p-[1.75rem] items-center h-[28.125rem] rounded-[2.125rem] shadow-md bg-white text-black font-extralight ">
             <Tab

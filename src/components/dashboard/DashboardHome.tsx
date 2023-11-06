@@ -5,7 +5,7 @@ import FeaturedFunds from "./FeaturedFunds";
 
 function DashboardHome() {
   return (
-    <div className="flex landingDesktop:mx-[1.375rem] mt-[1.375rem] ">
+    <div className="flex landingDesktop:ml-[1.375rem] mt-[1.375rem] ">
       <Tab.Group>
         <Tab.List className="flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black text-[1.25rem] font-light ">
           <Tab
