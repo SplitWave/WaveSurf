@@ -18,12 +18,12 @@ function Header() {
           Featured NFT Funds
         </h1>
       </div>
-      <div className=" landingDesktop:flex landingDesktop:flex-row landingDesktop:justify-between ">
-        <h1 className=" flex flex-row items-center mobile:ml-[0.625rem] landingDesktop:ml-[0.625rem] landingDesktop:mr-[2.875rem] mobile:text-[1.375rem] landingDesktop:text-[1.75rem] font-light  text-[#605C5C] ">
+      <div className="  landingDesktop:flex landingDesktop:flex-row landingDesktop:justify-between ">
+        <h1 className="  flex flex-row items-center mobile:ml-[0.625rem] landingDesktop:ml-[0.625rem] landingDesktop:mr-[2.875rem] mobile:text-[1.375rem] landingDesktop:text-[1.75rem] font-light  text-[#605C5C] ">
           Account value $0.00{" "}
           <FaChevronDown className=" w-[1rem] h-[1rem] ml-[0.3125rem] " />
         </h1>
-        <div className=" border-l-[0.125rem] border-l-[#C0CCDA] px-[1.25rem] landingDesktop:w-[25rem] landingDesktop:flex landingDesktop:flex-row ">
+        <div className="  border-l-[0.125rem] border-l-[#C0CCDA] px-[1.25rem]  landingDesktop:flex landingDesktop:flex-row ">
           <div className=" ">
             <h1 className=" text-black text-center text-[1.25rem] font-light ">
               toly@solana.org

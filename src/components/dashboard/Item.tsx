@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { LineChart, Line } from "recharts";
+import { LineChart, Line, ResponsiveContainer } from "recharts";
 
 export type ItemData = {
   img: string;
@@ -16,7 +16,7 @@ export type ItemData = {
 function Item({ selected, item }: { selected: boolean; item: ItemData }) {
   return (
     <div
-      className={` outline-none focus:outline-none landingDesktop:w-[21.875rem] p-[1.125rem] rounded-[0.125rem] landingDesktop:h-[13.75rem] bg-white ${
+      className={` outline-none focus:outline-none landingDesktop:w-full p-[1.125rem] rounded-[0.125rem] landingDesktop:h-[13.75rem] bg-white ${
         selected && "bg-[#F6F6F6]"
       } `}
     >
@@ -25,7 +25,7 @@ function Item({ selected, item }: { selected: boolean; item: ItemData }) {
           selected ? "bg-[#00A7E1]" : ""
         }`}
       ></div>
-      <div className=" flex flex-row items-center ">
+      <div className=" flex flex-row items-center justify-between ">
         <div className=" relative w-[3.4375rem] h-[3.4375rem] ">
           <Image src={item.img} alt="" layout="fill" objectFit="cover" />
         </div>
@@ -51,15 +51,27 @@ function Item({ selected, item }: { selected: boolean; item: ItemData }) {
         </div>
       </div>
       <div style={{ width: "100%" }}>
-        <LineChart width={300} height={100} data={item.data}>
-          <Line
-            type="monotone"
-            dataKey="pv"
-            stroke={item.isNegative ? "red" : "#2F982D"}
-            isAnimationActive={false}
-            dot={false}
-          />
-        </LineChart>
+        <ResponsiveContainer width="100%" height={100}>
+          <LineChart
+            width={500}
+            height={100}
+            margin={{
+              top: 10,
+              right: 10,
+              left: 10,
+              bottom: 5,
+            }}
+            data={item.data}
+          >
+            <Line
+              type="monotone"
+              dataKey="pv"
+              stroke={item.isNegative ? "red" : "#2F982D"}
+              isAnimationActive={false}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

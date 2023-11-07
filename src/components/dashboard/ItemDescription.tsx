@@ -6,7 +6,7 @@ import { PiSealCheckFill } from "react-icons/pi";
 import { BsCircleFill, BsChevronDown } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import { Disclosure } from "@headlessui/react";
-import Modal from "react-modal";
+import Modal from "@mui/material/Modal";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
@@ -35,7 +35,7 @@ function ItemDescription({ item }: { item: ItemData }) {
 
   return (
     <div className=" w-full ">
-      <div className=" w-[36.25rem] landingDesktop:h-full bg-white landingDesktop:py-[2.4375rem]  ">
+      <div className=" w-full landingDesktop:h-full bg-white landingDesktop:py-[2.4375rem]  ">
         <div className=" w-full landingDesktop:pl-[1.25rem] landingDesktop:pr-[1.25rem] landingDesktop:flex landingDesktop:flex-row landingDesktop:justify-between items-center ">
           {isLoading ? (
             <ThreeDots
@@ -117,7 +117,7 @@ function ItemDescription({ item }: { item: ItemData }) {
       </div>
       <Disclosure
         as="div"
-        className=" w-[36.25rem] landingDesktop:h-full bg-white landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[1.5625rem] "
+        className=" w-full landingDesktop:h-full bg-white landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[1.5625rem] "
       >
         <Disclosure.Button className=" w-full landingDesktop:flex landingDesktop:flex-row items-center landingDesktop:justify-between text-black ">
           <h1 className=" font-light text-[1.5rem] ">Fund details </h1>
@@ -155,79 +155,76 @@ function ItemDescription({ item }: { item: ItemData }) {
           </table>
         </Disclosure.Panel>
       </Disclosure>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Payment Modal"
-        className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md landingDesktop:mt-[0.625rem] m-auto py-[2.1875rem] px-[3rem] "
-      >
-        <div className=" flex flex-row items-center justify-center text-black w-full  ">
-          <h1 className=" text-[1.5rem] font-normal text-center  ">
-            Buy PhotoFinish
-          </h1>
-          <AiOutlineClose
-            size={30}
-            className="ml-[2.3125rem]"
-            onClick={closeModal}
-          />
-        </div>
-        <h1 className=" text-[#00A7E1] text-center text-[3.125rem] font-medium mt-[0.625rem] mr-[3.75rem] ">
-          £ 100
-        </h1>
-        <div className=" w-full text-center text-black ">
-          <Slider
-            min={0}
-            max={100}
-            value={value}
-            onChange={(newValue) => setValue(newValue)}
-            styles={{
-              handle: handleStyle,
-              track: trackStyle,
-              rail: railStyle,
-            }}
-          />
-          <h1 className=" text-[1.5rem] font-normal mt-[2.125rem] ">
-            <span className=" text-[#00A7E1] ">{value}</span>% of pool
-          </h1>
-        </div>
-        <div className="flex items-center w-full justify-center landingDesktop:mt-[4.75rem] ">
-          <input
-            type="checkbox"
-            className="focus:ring-blue-500 h-4 w-4 text-blue-600"
-          />
-          <label
-            htmlFor="terms"
-            className="ml-2 text-[1.25rem] font-normal text-black text-center "
-          >
-            I accept the <span className=" text-[#00A7E1] ">terms</span> &{" "}
-            <span className=" text-[#00A7E1] ">conditions</span> of the pool
-          </label>
-        </div>
-        <button className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] ">
-          <h1 className=" text-black font-medium ">Pay with</h1>
-          <div className=" relative w-[3.75rem] h-[1.125rem] ml-[0.375rem] ">
-            <Image
-              src="/assets/PNG/SolanaPayMark.png"
-              alt=""
-              layout="fill"
-              objectFit="cover"
+      <Modal open={modalIsOpen} onClose={closeModal}>
+        <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md landingDesktop:mt-[20px] m-auto py-[2.1875rem] px-[3rem] ">
+          <div className=" flex flex-row items-center justify-center text-black w-full  ">
+            <h1 className=" text-[1.5rem] font-normal text-center  ">
+              Buy {item.name}
+            </h1>
+            <AiOutlineClose
+              size={30}
+              className="ml-[2.3125rem]"
+              onClick={closeModal}
             />
           </div>
-        </button>
-        <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#9036D9] rounded-[0.25rem] ">
-          <h1 className=" text-white font-medium ">Pay with</h1>
-          <div className=" relative w-[1.875rem] h-[1.5625rem] ml-[0.375rem] ">
-            <Image
-              src="/assets/PNG/phantom-ghost-white.png"
-              alt=""
-              layout="fill"
-              objectFit="cover"
+          <h1 className=" text-[#00A7E1] text-center text-[3.125rem] font-medium mt-[0.625rem] mr-[3.75rem] ">
+            £ 100
+          </h1>
+          <div className=" w-full text-center text-black ">
+            <Slider
+              min={0}
+              max={100}
+              value={value}
+              onChange={(newValue) => setValue(newValue)}
+              styles={{
+                handle: handleStyle,
+                track: trackStyle,
+                rail: railStyle,
+              }}
             />
+            <h1 className=" text-[1.5rem] font-normal mt-[2.125rem] ">
+              <span className=" text-[#00A7E1] ">{value}</span>% of pool
+            </h1>
           </div>
-        </button>
-        <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 rounded-[0.25rem] ">
-          <h1 className=" text-white font-medium ">More payments options</h1>
-        </button>
+          <div className="flex items-center w-full justify-center landingDesktop:mt-[4.75rem] ">
+            <input
+              type="checkbox"
+              className="focus:ring-blue-500 h-4 w-4 text-blue-600"
+            />
+            <label
+              htmlFor="terms"
+              className="ml-2 text-[1.25rem] font-normal text-black text-center "
+            >
+              I accept the <span className=" text-[#00A7E1] ">terms</span> &{" "}
+              <span className=" text-[#00A7E1] ">conditions</span> of the pool
+            </label>
+          </div>
+          <button className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] ">
+            <h1 className=" text-black font-medium ">Pay with</h1>
+            <div className=" relative w-[3.75rem] h-[1.125rem] ml-[0.375rem] ">
+              <Image
+                src="/assets/PNG/SolanaPayMark.png"
+                alt=""
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          </button>
+          <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#9036D9] rounded-[0.25rem] ">
+            <h1 className=" text-white font-medium ">Pay with</h1>
+            <div className=" relative w-[1.875rem] h-[1.5625rem] ml-[0.375rem] ">
+              <Image
+                src="/assets/PNG/phantom-ghost-white.png"
+                alt=""
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          </button>
+          <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 rounded-[0.25rem] ">
+            <h1 className=" text-white font-medium ">More payments options</h1>
+          </button>
+        </div>
       </Modal>
     </div>
   );

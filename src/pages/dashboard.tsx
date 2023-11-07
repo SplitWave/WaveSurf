@@ -62,7 +62,7 @@ function dashboard() {
               </div>
             </Tab>
           </Tab.List>
-          <Tab.Panels>
+          <Tab.Panels className=" w-full ">
             <Tab.Panel>
               <DashboardHome />
             </Tab.Panel>

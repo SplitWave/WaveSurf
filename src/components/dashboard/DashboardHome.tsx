@@ -5,9 +5,9 @@ import FeaturedFunds from "./FeaturedFunds";
 
 function DashboardHome() {
   return (
-    <div className="flex landingDesktop:ml-[1.375rem] mt-[1.375rem] ">
+    <div className="flex landingDesktop:pl-[1.375rem] mt-[1.375rem] w-full ">
       <Tab.Group>
-        <Tab.List className="flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black text-[1.25rem] font-light ">
+        <Tab.List className=" landingDesktop:w-[14.5rem] flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black text-[1.25rem] font-light ">
           <Tab
             className={({ selected }) =>
               classNames(
@@ -79,7 +79,7 @@ function DashboardHome() {
             <h1>📂 Create</h1>
           </Tab>
         </Tab.List>
-        <Tab.Panels className="p-3">
+        <Tab.Panels className="p-3 w-full ">
           <Tab.Panel className="relative" as="div">
             <FeaturedFunds />
           </Tab.Panel>
