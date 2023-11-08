@@ -14,16 +14,46 @@ const LoginPage = () => {
   const router = useRouter();
   const [user, setUser] = useContext(UserContext);
   const initialValues = {
-    name: "",
     email: "",
-    password: "",
-    rememberMe: false,
   };
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   // Redirect to /profile if the user is logged in
   useEffect(() => {
     user?.issuer && router.push("/dashboard");
   }, [user]);
+
+  async function handleLoginWithEmail(email: string) {
+    try {
+      setDisabled(true); // disable login button to prevent multiple emails from being triggered
+
+      // Trigger Magic link to be sent to user
+      let didToken = await magic?.auth.loginWithMagicLink({
+        email,
+        redirectURI: new URL("/callback", window.location.origin).href, // optional redirect back to your app after magic link is clicked
+      });
+
+      // Validate didToken with server
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + didToken,
+        },
+      });
+
+      if (res.status === 200) {
+        // Set the UserContext to the now logged in user
+        let userMetadata = await magic?.user.getMetadata();
+        console.log("userMetadata", userMetadata);
+        await setUser(userMetadata);
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      setDisabled(false); // re-enable login button - user may have requested to edit their email
+      console.log(error);
+    }
+  }
 
   async function handleLoginWithSocial() {
     await magic?.oauth.loginWithRedirect({
@@ -33,13 +63,12 @@ const LoginPage = () => {
   }
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Required"),
     email: Yup.string().email("Invalid email format").required("Required"),
-    password: Yup.string().required("Required"),
   });
 
   const onSubmit = (values: any) => {
-    console.log("Form data:", values);
+    //console.log("Form data:", values)
+    handleLoginWithEmail(values.email);
   };
 
   const [enabled, setEnabled] = useState(false);
@@ -86,28 +115,18 @@ const LoginPage = () => {
           <h1 className="   font-medium text-center text-[1.125rem] text-gray-400 my-[1.3125rem] ">
             or
           </h1>
+          {/* <div className=" mt-[1.25rem] ">
+            <EmailForm
+              disabled={disabled}
+              onEmailSubmit={handleLoginWithEmail}
+            />
+          </div> */}
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={onSubmit}
           >
             <Form className=" landingDesktop:px-[3.9375rem] text-gray-400 ">
-              <div>
-                <label
-                  htmlFor="name"
-                  className=" text-black font-normal text-[0.875rem] "
-                >
-                  Name
-                </label>
-                <Field
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Your full name"
-                  className=" w-full h-[3.125rem] px-[1.25rem] rounded-[0.9375rem] border-[0.0625rem] border-gray-200 mt-[0.3125rem] "
-                />
-                <ErrorMessage name="name" component="div" />
-              </div>
               <div className=" mt-[1.5rem] ">
                 <label
                   htmlFor="email"
@@ -124,22 +143,7 @@ const LoginPage = () => {
                 />
                 <ErrorMessage name="email" component="div" />
               </div>
-              <div className=" mt-[1.5rem] ">
-                <label
-                  htmlFor="password"
-                  className=" text-black font-normal text-[0.875rem] "
-                >
-                  Password
-                </label>
-                <Field
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Your password"
-                  className=" w-full h-[3.125rem] px-[1.25rem] rounded-[0.9375rem] border-[0.0625rem] border-gray-200 mt-[0.3125rem] "
-                />
-                <ErrorMessage name="password" component="div" />
-              </div>
+
               <div className=" flex flex-row items-center mt-[1.5rem] ">
                 <Switch
                   checked={enabled}
