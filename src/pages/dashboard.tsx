@@ -1,5 +1,4 @@
 import Header from "@/components/dashboard/Header";
-import ProtectWithAuth from "@/lib/ProtectWithAuth";
 import React from "react";
 import { Tab } from "@headlessui/react";
 import { TbSmartHome, TbChartPie, TbSearch } from "react-icons/tb";
@@ -10,9 +9,9 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-function dashboard() {
+const Dashboard = () => {
   return (
-    <div className=" bg-[#ECE8E8] w-full h-[67.5rem] ">
+    <div className=" bg-[#ECE8E8] w-full h-[67.5rem] font-poppins ">
       <Header />
       <div className=" flex w-full h-full landingDesktop:pl-[2.0625rem] landingDesktop:pt-[2.125rem]  ">
         <Tab.Group vertical>
@@ -74,6 +73,6 @@ function dashboard() {
       </div>
     </div>
   );
-}
+};
 
-export default ProtectWithAuth(dashboard);
+export default Dashboard;

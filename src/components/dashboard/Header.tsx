@@ -1,8 +1,11 @@
+import { UserContext } from "@/context/UserContext";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { ThreeDots } from "react-loader-spinner";
 
 function Header() {
+  const [user] = useContext(UserContext);
   return (
     <div className=" bg-white w-full py-[0.625rem] flex flex-row items-center landingDesktop:justify-between ">
       <div className=" flex flex-row items-center landingDesktop:ml-[0.625rem] ">
@@ -25,9 +28,15 @@ function Header() {
         </h1>
         <div className="  border-l-[0.125rem] border-l-[#C0CCDA] px-[1.25rem]  landingDesktop:flex landingDesktop:flex-row ">
           <div className=" ">
-            <h1 className=" text-black text-center text-[1.25rem] font-light ">
-              toly@solana.org
-            </h1>
+            {user?.loading ? (
+              <></>
+            ) : (
+              user?.issuer && (
+                <h1 className=" text-black text-center text-[1.125rem] font-light ">
+                  {user.email}
+                </h1>
+              )
+            )}
             <h1 className=" text-[#FF731C] text-[1.25rem] font-medium text-center ">
               INVESTING - REAL MONEY
             </h1>

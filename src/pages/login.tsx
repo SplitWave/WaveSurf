@@ -2,58 +2,35 @@ import Image from "next/image";
 import { FaGoogle, FaApple } from "react-icons/fa";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
-import { ReactSVG } from "react-svg";
 import { magic } from "@/lib/magic";
-import { useWeb3 } from "@/context/Web3Context";
 import { MagicUserMetadata } from "magic-sdk";
 import { useRouter } from "next/router";
-
-interface OAuthRedirectResult {
-  oauth: {
-    provider: string;
-
-    scope: string[];
-
-    accessToken: string;
-
-    userHandle: string;
-
-    // `userInfo` contains the OpenID Connect profile information
-
-    // about the user. The schema of this object should match the
-
-    // OpenID spec, except that fields are `camelCased` instead
-
-    // of `snake_cased`.
-
-    // The presence of some fields may differ depending on the
-
-    // specific OAuth provider and the user's own privacy settings.
-
-    // See: https://openid.net/specs/openid-connect-basic-1_0.html#StandardClaims
-
-    userInfo: string;
-  };
-
-  magic: {
-    idToken: string;
-
-    userMetadata: MagicUserMetadata;
-  };
-}
+import { UserContext } from "@/context/UserContext";
 
 const LoginPage = () => {
   const router = useRouter();
+  const [user, setUser] = useContext(UserContext);
   const initialValues = {
     name: "",
     email: "",
     password: "",
     rememberMe: false,
   };
-  const { initializeWeb3 } = useWeb3();
+
+  // Redirect to /profile if the user is logged in
+  useEffect(() => {
+    user?.issuer && router.push("/dashboard");
+  }, [user]);
+
+  async function handleLoginWithSocial() {
+    await magic?.oauth.loginWithRedirect({
+      provider: "google", // google, apple, etc
+      redirectURI: new URL("/callback", window.location.origin).href, // required redirect to finish social login
+    });
+  }
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
@@ -66,54 +43,6 @@ const LoginPage = () => {
   };
 
   const [enabled, setEnabled] = useState(false);
-
-  // Start the OAuth 2.0 login flow
-  const startOAuthLogin = async () => {
-    try {
-      await magic.oauth.loginWithRedirect({
-        provider: "google",
-        redirectURI: "http://localhost:3000/login/",
-        // redirectURI:
-        //   "https://auth.magic.link/v1/oauth2/CndqvnPL2HbSUSI3agyWi9ZMrEIP7EjptWSOHpPmdPE=/callback",
-        //scope: ["userinfo.email"],
-      });
-    } catch (error) {
-      // Handle error here
-      console.error("OAuth login error:", error);
-    }
-  };
-
-  // useEffect(() => {
-  //   const handleOAuthRedirectResult = async () => {
-  //     try {
-  //       const urlParams = new URLSearchParams(window.location.search);
-  //       const provider = urlParams.get("provider");
-  //       const state = urlParams.get("state");
-  //       // Extract other relevant parameters as needed
-
-  //       console.log("OAuth provider:", provider);
-  //       console.log("OAuth state:", state);
-  //       // Log or handle other parameters accordingly
-
-  //       // Clear the URL query parameters after extracting the data
-  //       if (window) {
-  //         window.history.replaceState(
-  //           {},
-  //           document.title,
-  //           router.asPath.split("?")[0]
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("OAuth redirect result error:", error);
-  //     }
-  //   };
-
-  //   handleOAuthRedirectResult();
-  // }, [router]);
-
-  const handleConnect = () => {
-    startOAuthLogin();
-  };
 
   return (
     <div className=" bg-[#00A7E1] w-full h-full ">
@@ -149,7 +78,7 @@ const LoginPage = () => {
             </div>
             <div
               className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center "
-              onClick={handleConnect}
+              onClick={handleLoginWithSocial}
             >
               <FaGoogle size={31} />
             </div>

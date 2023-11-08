@@ -117,7 +117,7 @@ function ItemDescription({ item }: { item: ItemData }) {
       </div>
       <Disclosure
         as="div"
-        className=" w-full landingDesktop:h-full bg-white landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[1.5625rem] "
+        className=" w-full landingDesktop:h-full bg-white landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[0.9375rem] "
       >
         <Disclosure.Button className=" w-full landingDesktop:flex landingDesktop:flex-row items-center landingDesktop:justify-between text-black ">
           <h1 className=" font-light text-[1.5rem] ">Fund details </h1>
@@ -156,7 +156,7 @@ function ItemDescription({ item }: { item: ItemData }) {
         </Disclosure.Panel>
       </Disclosure>
       <Modal open={modalIsOpen} onClose={closeModal}>
-        <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md landingDesktop:mt-[20px] m-auto py-[2.1875rem] px-[3rem] ">
+        <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md  m-auto py-[2.1875rem] px-[3rem] ">
           <div className=" flex flex-row items-center justify-center text-black w-full  ">
             <h1 className=" text-[1.5rem] font-normal text-center  ">
               Buy {item.name}
