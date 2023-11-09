@@ -22,10 +22,18 @@ const Callback = () => {
 
   // `loginWithCredential()` returns a didToken for the user logging in
   const finishEmailRedirectLogin = () => {
+    console.log("magic_credentials:", router.query.magic_credential);
     if (router.query.magic_credential)
-      magic.auth
-        .loginWithCredential()
-        .then((didToken) => authenticateWithServer(didToken));
+      try {
+        magic.auth
+          .loginWithCredential(router.query.magic_credential)
+          .then((didToken) => {
+            console.log("didToken", didToken);
+            authenticateWithServer(didToken);
+          });
+      } catch (error) {
+        console.error(error);
+      }
   };
 
   // Send token to server to validate
