@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { FaGoogle, FaApple } from "react-icons/fa";
+import { PiTelegramLogo } from "react-icons/pi";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useContext, useEffect, useState } from "react";
@@ -18,9 +19,9 @@ const LoginPage = () => {
   };
   const [disabled, setDisabled] = useState<boolean>(false);
 
-  // Redirect to /profile if the user is logged in
+  // Redirect to /dashboard if the user is logged in
   useEffect(() => {
-    user?.issuer && router.push("/dashboard");
+    user?.user?.issuer && router.push("/dashboard");
   }, [user]);
 
   async function handleLoginWithEmail(email: string) {
@@ -46,7 +47,7 @@ const LoginPage = () => {
         // Set the UserContext to the now logged in user
         let userMetadata = await magic?.user.getMetadata();
         console.log("userMetadata", userMetadata);
-        await setUser(userMetadata);
+        await setUser({ ...user, magicUserMetadata: userMetadata });
         router.push("/dashboard");
       }
     } catch (error) {
@@ -99,7 +100,7 @@ const LoginPage = () => {
       <div className=" w-full h-full relative py-[6.25rem]">
         <div className=" m-auto mobile:w-4/5 landingDesktop:w-[28.25rem] z-20 rounded-[0.9375rem] bg-white shadow-md py-[2rem] mobile:px-[0.9375rem] landingDesktop:px-0 ">
           <h1 className=" font-medium text-[1.125rem] text-center text-gray-700 ">
-            Register with
+            Login with
           </h1>
           <div className=" w-4/5 mobile:mt-[0.9375rem] landingDesktop:mt-[2.1875rem] justify-evenly m-auto flex flex-row items-center ">
             <div className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center ">
@@ -161,15 +162,12 @@ const LoginPage = () => {
                   Remember me
                 </h1>
               </div>
-              <div className=" mt-[2.25rem] text-white font-bold text-[0.625rem] w-full h-[2.8125rem] px-[0.5rem] bg-[#00A7E1] flex justify-center items-center rounded-[0.75rem] ">
-                <button type="submit">SIGN UP</button>
+              <div className=" mt-[2.25rem] text-white font-bold text-[0.625rem] w-full h-[2.8125rem] px-[0.5rem] bg-[#00A7E1] flex flex-row justify-center items-center rounded-[0.75rem] ">
+                <PiTelegramLogo size={18} />
+                <button type="submit" className=" ml-[0.625rem] ">
+                  Send Magic Link
+                </button>
               </div>
-              <h1 className=" mt-[1.5rem] text-[0.875rem] text-center font-bold text-gray-400 ">
-                Already have an account?{" "}
-                <Link href="/signIn">
-                  <span className=" text-[#00A7E1] ">Sign in</span>
-                </Link>
-              </h1>
             </Form>
           </Formik>
         </div>

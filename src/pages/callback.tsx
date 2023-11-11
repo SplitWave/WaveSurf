@@ -1,4 +1,4 @@
-import { useEffect, useContext, useState, use } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import Router, { useRouter } from "next/router";
 import { magic } from "../lib/magic";
 import { UserContext } from "../context/UserContext";
@@ -7,7 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 const Callback = () => {
   const router = useRouter();
   const [user, setUser] = useContext(UserContext);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // The redirect contains a `provider` query param if the user is logging in with a social provider
   useEffect(() => {
@@ -15,29 +15,30 @@ const Callback = () => {
   }, [router.query]);
 
   // `getRedirectResult()` returns an object with user data from Magic and the social provider
-  const finishSocialLogin = async () => {
-    let result = await magic.oauth.getRedirectResult();
+  const finishSocialLogin = async (): Promise<void> => {
+    let result = await magic?.oauth.getRedirectResult();
     authenticateWithServer(result.magic.idToken);
   };
 
   // `loginWithCredential()` returns a didToken for the user logging in
-  const finishEmailRedirectLogin = () => {
+  const finishEmailRedirectLogin = async (): Promise<void> => {
     console.log("magic_credentials:", router.query.magic_credential);
-    if (router.query.magic_credential)
+    if (router.query.magic_credential) {
       try {
-        magic.auth
-          .loginWithCredential(router.query.magic_credential)
+        await magic?.auth
+          .loginWithCredential(router.query.magic_credential as string)
           .then((didToken) => {
             console.log("didToken", didToken);
-            authenticateWithServer(didToken);
+            authenticateWithServer(didToken as string);
           });
       } catch (error) {
         console.error(error);
       }
+    }
   };
 
   // Send token to server to validate
-  const authenticateWithServer = async (didToken) => {
+  const authenticateWithServer = async (didToken: string): Promise<void> => {
     let res = await fetch("/api/login", {
       method: "POST",
       headers: {
@@ -48,9 +49,9 @@ const Callback = () => {
 
     if (res.status === 200) {
       // Set the UserContext to the now logged in user
-      let userMetadata = await magic.user.getMetadata();
+      let userMetadata = await magic?.user.getMetadata();
       console.log("userMetadata", userMetadata);
-      await setUser(userMetadata);
+      setUser({ ...user, magicUserMetadata: userMetadata });
       Router.push("/dashboard");
     }
   };

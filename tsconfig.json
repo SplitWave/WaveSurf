@@ -17,6 +17,13 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/callback.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/pages/callback.tsx",
+    "src/pages/api/login.ts",
+    "src/lib/magic.ts"
+  ],
   "exclude": ["node_modules"]
 }

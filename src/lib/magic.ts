@@ -1,21 +1,16 @@
 import { Magic } from "magic-sdk";
 import { OAuthExtension } from "@magic-ext/oauth";
 
-type MagicInstance = Magic | null;
-
 // Create client-side Magic instance
-const createMagic = (key: string): MagicInstance => {
-  if (typeof window !== "undefined") {
-    return new Magic(key, {
-      extensions: [new OAuthExtension()],
-    });
-  }
-  return null;
+const createMagic = (key: string | undefined) => {
+  return typeof window !== "undefined" && key
+    ? new Magic(key, {
+        extensions: [new OAuthExtension()],
+      })
+    : null;
 };
 
-const magicApiKey = process.env.NEXT_PUBLIC_MAGIC_API_KEY ?? "YOUR_DEFAULT_KEY";
-
-export const magic: MagicInstance = createMagic(magicApiKey);
+export const magic = createMagic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY);
 
 // import { Magic } from "magic-sdk";
 // import { OAuthExtension } from "@magic-ext/oauth";
