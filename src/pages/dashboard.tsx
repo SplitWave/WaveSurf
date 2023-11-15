@@ -5,8 +5,12 @@ import { TbSmartHome, TbChartPie, TbSearch } from "react-icons/tb";
 import DashboardHome from "@/components/dashboard/DashboardHome";
 import Image from "next/image";
 
-export function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+export function classNames(
+  ...classes: Array<string | boolean | undefined | null>
+): string {
+  return classes
+    .filter((value) => typeof value === "string" && Boolean(value))
+    .join(" ");
 }
 
 const Dashboard = () => {

@@ -175,7 +175,7 @@ function ItemDescription({ item }: { item: ItemData }) {
               min={0}
               max={100}
               value={value}
-              onChange={(newValue) => setValue(newValue)}
+              onChange={(newValue) => setValue(newValue as number)}
               styles={{
                 handle: handleStyle,
                 track: trackStyle,
