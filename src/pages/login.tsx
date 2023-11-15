@@ -7,7 +7,6 @@ import { useContext, useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
 import { magic } from "@/lib/magic";
-import { MagicUserMetadata } from "magic-sdk";
 import { useRouter } from "next/router";
 import { UserContext } from "@/context/UserContext";
 
@@ -47,7 +46,7 @@ const LoginPage = () => {
         // Set the UserContext to the now logged in user
         let userMetadata = await magic?.user.getMetadata();
         console.log("userMetadata", userMetadata);
-        await setUser({ ...user, magicUserMetadata: userMetadata });
+        await setUser({ user: userMetadata });
         router.push("/dashboard");
       }
     } catch (error) {

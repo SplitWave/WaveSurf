@@ -51,7 +51,7 @@ const Callback = () => {
       // Set the UserContext to the now logged in user
       let userMetadata = await magic?.user.getMetadata();
       console.log("userMetadata", userMetadata);
-      setUser({ ...user, magicUserMetadata: userMetadata });
+      setUser({ user: userMetadata });
       Router.push("/dashboard");
     }
   };

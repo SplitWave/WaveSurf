@@ -9,9 +9,10 @@ import Router from "next/router";
 
 function Header() {
   const [user, setUser] = useContext(UserContext);
+  console.log("user :", user);
 
   const logout = () => {
-    magic.user.logout().then(() => {
+    magic?.user.logout().then(() => {
       setUser({ user: null });
       Router.push("/login");
     });
@@ -41,14 +42,10 @@ function Header() {
           <div>
             <Menu.Button className="  border-l-[0.125rem] border-l-[#C0CCDA] px-[1.25rem]  landingDesktop:flex landingDesktop:flex-row hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 ">
               <div className=" ">
-                {user?.loading ? (
-                  <></>
-                ) : (
-                  user?.issuer && (
-                    <h1 className=" text-black text-center text-[1.125rem] font-light ">
-                      {user.email}
-                    </h1>
-                  )
+                {user?.user?.issuer && (
+                  <h1 className=" text-black text-center text-[1.125rem] font-light ">
+                    {user?.user?.email}
+                  </h1>
                 )}
                 <h1 className=" text-[#FF731C] text-[1.25rem] font-medium text-center ">
                   INVESTING - REAL MONEY
