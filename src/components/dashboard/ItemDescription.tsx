@@ -17,7 +17,7 @@ import {
 import { Connection, PublicKey } from "@solana/web3.js";
 import { TLog } from "../../../types";
 
-const NETWORK = "https://api.testnet.solana.com";
+const NETWORK = "https://api.devnet.solana.com";
 const provider = getProvider();
 const connection = new Connection(NETWORK);
 const message = "Sign below to authenticate with Wavesurf.";
@@ -52,7 +52,7 @@ const railStyle = { height: 15 };
 
 function ItemDescription({ item }: { item: ItemData }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [IsModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState<number>(50);
   const [logs, setLogs] = useState<TLog[]>([]);
 
@@ -154,6 +154,7 @@ function ItemDescription({ item }: { item: ItemData }) {
         method: "signTransaction",
         message: `Transaction signed: ${JSON.stringify(signedTransaction)}`,
       });
+      setIsModalOpen(false);
     } catch (error: any) {
       createLog({
         status: "error",
@@ -164,11 +165,11 @@ function ItemDescription({ item }: { item: ItemData }) {
   }, [createLog]);
 
   function openModal() {
-    setIsOpen(true);
+    setIsModalOpen(true);
   }
 
   function closeModal() {
-    setIsOpen(false);
+    setIsModalOpen(false);
   }
 
   return (
@@ -293,7 +294,7 @@ function ItemDescription({ item }: { item: ItemData }) {
           </table>
         </Disclosure.Panel>
       </Disclosure>
-      <Modal open={modalIsOpen} onClose={closeModal}>
+      <Modal open={IsModalOpen} onClose={closeModal}>
         <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md  m-auto py-[2.1875rem] px-[3rem] ">
           <div className=" flex flex-row items-center justify-center text-black w-full  ">
             <h1 className=" text-[1.5rem] font-normal text-center  ">
