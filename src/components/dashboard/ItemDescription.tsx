@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { ItemData } from "./Item";
 import { PiSealCheckFill } from "react-icons/pi";
@@ -9,21 +9,159 @@ import { Disclosure } from "@headlessui/react";
 import Modal from "@mui/material/Modal";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import {
+  getProvider,
+  signTransaction,
+  createTransferTransaction,
+} from "@/utils";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { TLog } from "../../../types";
+
+const NETWORK = "https://api.testnet.solana.com";
+const provider = getProvider();
+const connection = new Connection(NETWORK);
+const message = "Sign below to authenticate with Wavesurf.";
+
+export type ConnectedMethods =
+  | {
+      name: string;
+      onClick: () => Promise<string>;
+    }
+  | {
+      name: string;
+      onClick: () => Promise<void>;
+    };
+
+interface Props {
+  publicKey: PublicKey | null;
+  connectedMethods: ConnectedMethods[];
+  handleConnect: () => Promise<void>;
+  logs: TLog[];
+  clearLogs: () => void;
+}
+
+const handleStyle = {
+  borderColor: "#00A7E1",
+  backgroundColor: "#00A7E1",
+  height: 25,
+  borderRadius: 15,
+  width: 25,
+};
+const trackStyle = { height: 15, backgroundColor: "#00A7E1" };
+const railStyle = { height: 15 };
 
 function ItemDescription({ item }: { item: ItemData }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState<number>(50);
+  const [logs, setLogs] = useState<TLog[]>([]);
 
-  const handleStyle = {
-    borderColor: "#00A7E1",
-    backgroundColor: "#00A7E1",
-    height: 25,
-    borderRadius: 15,
-    width: 25,
-  };
-  const trackStyle = { height: 15, backgroundColor: "#00A7E1" };
-  const railStyle = { height: 15 };
+  const createLog = useCallback(
+    (log: TLog) => {
+      return setLogs((logs) => [...logs, log]);
+    },
+    [setLogs]
+  );
+
+  const clearLogs = useCallback(() => {
+    setLogs([]);
+  }, [setLogs]);
+
+  useEffect(() => {
+    if (!provider) return;
+
+    // attempt to eagerly connect
+    provider.connect({ onlyIfTrusted: true }).catch(() => {
+      // fail silently
+    });
+
+    provider.on("connect", (publicKey: PublicKey) => {
+      createLog({
+        status: "success",
+        method: "connect",
+        message: `Connected to account ${publicKey.toBase58()}`,
+      });
+    });
+
+    provider.on("disconnect", () => {
+      createLog({
+        status: "warning",
+        method: "disconnect",
+        message: "👋",
+      });
+    });
+
+    provider.on("accountChanged", (publicKey: PublicKey | null) => {
+      if (publicKey) {
+        createLog({
+          status: "info",
+          method: "accountChanged",
+          message: `Switched to account ${publicKey.toBase58()}`,
+        });
+      } else {
+        /**
+         * In this case dApps could...
+         *
+         * 1. Not do anything
+         * 2. Only re-connect to the new account if it is trusted
+         *
+         * ```
+         * provider.connect({ onlyIfTrusted: true }).catch((err) => {
+         *  // fail silently
+         * });
+         * ```
+         *
+         * 3. Always attempt to reconnect
+         */
+
+        createLog({
+          status: "info",
+          method: "accountChanged",
+          message: "Attempting to switch accounts.",
+        });
+
+        provider.connect().catch((error) => {
+          createLog({
+            status: "error",
+            method: "accountChanged",
+            message: `Failed to re-connect: ${error.message}`,
+          });
+        });
+      }
+    });
+
+    return () => {
+      provider.disconnect();
+    };
+  }, [createLog]);
+
+  const handleSignTransaction = useCallback(async () => {
+    if (!provider) return;
+
+    try {
+      const transaction = await createTransferTransaction(
+        provider.publicKey as PublicKey,
+        connection
+      );
+      createLog({
+        status: "info",
+        method: "signTransaction",
+        message: `Requesting signature for: ${JSON.stringify(transaction)}`,
+      });
+      const signedTransaction = await signTransaction(provider, transaction);
+      createLog({
+        status: "success",
+        method: "signTransaction",
+        message: `Transaction signed: ${JSON.stringify(signedTransaction)}`,
+      });
+    } catch (error: any) {
+      createLog({
+        status: "error",
+        method: "signTransaction",
+        message: error.message as string,
+      });
+    }
+  }, [createLog]);
 
   function openModal() {
     setIsOpen(true);
@@ -210,7 +348,23 @@ function ItemDescription({ item }: { item: ItemData }) {
               />
             </div>
           </button>
-          <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#9036D9] rounded-[0.25rem] ">
+          <button
+            style={{
+              marginTop: "1.0625rem",
+              width: "100%",
+              height: "3.75rem",
+              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#9036D9",
+              borderRadius: "0.25rem",
+              transition: "background-color 0.3s",
+            }}
+            className=" hover:bg-purple-200 focus:bg-purple-300 "
+            onClick={handleSignTransaction}
+          >
             <h1 className=" text-white font-medium ">Pay with</h1>
             <div className=" relative w-[1.875rem] h-[1.5625rem] ml-[0.375rem] ">
               <Image

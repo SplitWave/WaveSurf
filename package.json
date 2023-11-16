@@ -20,6 +20,7 @@
     "@solana/spl-token": "^0.3.9",
     "@solana/web3.js": "^1.87.6",
     "bignumber.js": "^9.1.2",
+    "bs58": "^5.0.0",
     "firebase": "^10.6.0",
     "formik": "^2.4.5",
     "framer-motion": "^10.16.4",
