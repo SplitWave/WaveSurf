@@ -3,7 +3,7 @@ import type { AppProps } from "next/app";
 import { Inter, Poppins } from "next/font/google";
 import { UserContext, UserContextType } from "../context/UserContext";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { magic } from "@/lib/magic";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -16,7 +16,6 @@ const poppins = Poppins({
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [user, setUser] = useState<UserContextType>();
-  //const [user, setUser] = useContext(UserContext);
 
   // If isLoggedIn is true, set the UserContext with user data
   // Otherwise, redirect to /login and set UserContext to { user: null }
@@ -35,12 +34,6 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     });
   }, []);
-
-  // Redirect to /dashboard if the user is logged in
-  // useEffect(() => {
-  //   console.log("users data in app.tsx", user);
-  //   user?.user?.issuer && router.push("/dashboard");
-  // }, [user]);
 
   return (
     <UserContext.Provider value={[user, setUser]}>
