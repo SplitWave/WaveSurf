@@ -14,10 +14,15 @@ import {
   signTransaction,
   createTransferTransaction,
 } from "@/utils";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+import { encodeURL } from "@solana/pay";
+import QRCode from "react-qr-code";
 import { TLog } from "../../../types";
+import { createQR } from "@solana/pay";
 
-const NETWORK = "https://api.devnet.solana.com";
+export const ADMIN_WALLET_ADDRESS =
+  "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
+export const NETWORK = "https://api.devnet.solana.com";
 const provider = getProvider();
 const connection = new Connection(NETWORK);
 const message = "Sign below to authenticate with Wavesurf.";
@@ -55,6 +60,8 @@ function ItemDescription({ item }: { item: ItemData }) {
   const [IsModalOpen, setIsModalOpen] = useState(false);
   const [value, setValue] = useState<number>(50);
   const [logs, setLogs] = useState<TLog[]>([]);
+  const [qrCode, setQrCode] = useState<string | undefined>(undefined);
+  const [reference, setReference] = useState<string>();
 
   const createLog = useCallback(
     (log: TLog) => {
@@ -66,6 +73,58 @@ function ItemDescription({ item }: { item: ItemData }) {
   const clearLogs = useCallback(() => {
     setLogs([]);
   }, [setLogs]);
+
+  const handleGenerateClick = async () => {
+    // 1 - Send a POST request to our backend and log the response URL
+    const res = await fetch("/api/makeTransaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ amount: value }), // Include the amount from the state
+    });
+
+    const { url, ref } = await res.json();
+    console.log("url is:", url);
+
+    // 2 - Generate a QR Code from the URL and generate a blob
+    const qr = createQR(url);
+    const qrBlob = await qr.getRawData("png");
+    if (!qrBlob) return;
+
+    // 3 - Convert the blob to a base64 string (using FileReader) and set the QR code state
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (typeof event.target?.result === "string") {
+        setQrCode(event.target.result);
+      }
+    };
+    reader.readAsDataURL(qrBlob);
+
+    // 4 - Set the reference state
+    setReference(ref);
+  };
+
+  const handleVerifyClick = async () => {
+    // 1 - Check if the reference is set
+    if (!reference) {
+      alert("Please generate a payment order first");
+      return;
+    }
+
+    // 2 - Send a GET request to our backend and return the response status
+    const res = await fetch(`/api/makeTransaction?reference=${reference}`);
+    const { status } = await res.json();
+
+    // 3 - Alert the user if the transaction was verified or not and reset the QR code and reference
+    if (status === "verified") {
+      alert("Transaction verified");
+      setQrCode(undefined);
+      setReference(undefined);
+    } else {
+      alert("Transaction not found");
+    }
+  };
 
   useEffect(() => {
     if (!provider) return;
@@ -141,6 +200,8 @@ function ItemDescription({ item }: { item: ItemData }) {
     try {
       const transaction = await createTransferTransaction(
         provider.publicKey as PublicKey,
+        new PublicKey(ADMIN_WALLET_ADDRESS),
+        value,
         connection
       );
       createLog({
@@ -154,6 +215,7 @@ function ItemDescription({ item }: { item: ItemData }) {
         method: "signTransaction",
         message: `Transaction signed: ${JSON.stringify(signedTransaction)}`,
       });
+      console.log("signed transaction", `${JSON.stringify(signedTransaction)}`);
       setIsModalOpen(false);
     } catch (error: any) {
       createLog({
@@ -307,7 +369,7 @@ function ItemDescription({ item }: { item: ItemData }) {
             />
           </div>
           <h1 className=" text-[#00A7E1] text-center text-[3.125rem] font-medium mt-[0.625rem] mr-[3.75rem] ">
-            £ 100
+            £ {value}
           </h1>
           <div className=" w-full text-center text-black ">
             <Slider
@@ -338,7 +400,20 @@ function ItemDescription({ item }: { item: ItemData }) {
               <span className=" text-[#00A7E1] ">conditions</span> of the pool
             </label>
           </div>
-          <button className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] ">
+          {qrCode && (
+            <Image
+              src={qrCode}
+              style={{ position: "relative", background: "white" }}
+              alt="QR Code"
+              width={200}
+              height={200}
+              priority
+            />
+          )}
+          <button
+            className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
+            onClick={handleGenerateClick}
+          >
             <h1 className=" text-black font-medium ">Pay with</h1>
             <div className=" relative w-[3.75rem] h-[1.125rem] ml-[0.375rem] ">
               <Image
@@ -349,6 +424,14 @@ function ItemDescription({ item }: { item: ItemData }) {
               />
             </div>
           </button>
+          {reference && (
+            <button
+              className=" mt-[1.9375rem] text-black font-medium  w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
+              onClick={handleVerifyClick}
+            >
+              Verify Transaction
+            </button>
+          )}
           <button
             style={{
               marginTop: "1.0625rem",
@@ -379,6 +462,7 @@ function ItemDescription({ item }: { item: ItemData }) {
           <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 rounded-[0.25rem] ">
             <h1 className=" text-white font-medium ">More payments options</h1>
           </button>
+          {qrCode && <QRCode value={qrCode} />}
         </div>
       </Modal>
     </div>
