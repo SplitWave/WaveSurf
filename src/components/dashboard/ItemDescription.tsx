@@ -121,8 +121,12 @@ function ItemDescription({ item }: { item: ItemData }) {
       alert("Transaction verified");
       setQrCode(undefined);
       setReference(undefined);
+      setIsModalOpen(false);
     } else {
       alert("Transaction not found");
+      setQrCode(undefined);
+      setReference(undefined);
+      setIsModalOpen(false);
     }
   };
 
@@ -368,62 +372,70 @@ function ItemDescription({ item }: { item: ItemData }) {
               onClick={closeModal}
             />
           </div>
-          <h1 className=" text-[#00A7E1] text-center text-[3.125rem] font-medium mt-[0.625rem] mr-[3.75rem] ">
+          <h1 className=" text-[#00A7E1] text-center text-[3.125rem] font-medium mt-[0.625rem]  ">
             £ {value}
           </h1>
-          <div className=" w-full text-center text-black ">
-            <Slider
-              min={0}
-              max={100}
-              value={value}
-              onChange={(newValue) => setValue(newValue as number)}
-              styles={{
-                handle: handleStyle,
-                track: trackStyle,
-                rail: railStyle,
-              }}
-            />
-            <h1 className=" text-[1.5rem] font-normal mt-[2.125rem] ">
-              <span className=" text-[#00A7E1] ">{value}</span>% of pool
-            </h1>
-          </div>
-          <div className="flex items-center w-full justify-center landingDesktop:mt-[4.75rem] ">
-            <input
-              type="checkbox"
-              className="focus:ring-blue-500 h-4 w-4 text-blue-600"
-            />
-            <label
-              htmlFor="terms"
-              className="ml-2 text-[1.25rem] font-normal text-black text-center "
-            >
-              I accept the <span className=" text-[#00A7E1] ">terms</span> &{" "}
-              <span className=" text-[#00A7E1] ">conditions</span> of the pool
-            </label>
-          </div>
-          {qrCode && (
-            <Image
-              src={qrCode}
-              style={{ position: "relative", background: "white" }}
-              alt="QR Code"
-              width={200}
-              height={200}
-              priority
-            />
+          {!qrCode && (
+            <div className=" w-full text-center text-black ">
+              <Slider
+                min={0}
+                max={100}
+                value={value}
+                onChange={(newValue) => setValue(newValue as number)}
+                styles={{
+                  handle: handleStyle,
+                  track: trackStyle,
+                  rail: railStyle,
+                }}
+              />
+              <h1 className=" text-[1.5rem] font-normal mt-[2.125rem] ">
+                <span className=" text-[#00A7E1] ">{value}</span>% of pool
+              </h1>
+            </div>
           )}
-          <button
-            className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
-            onClick={handleGenerateClick}
-          >
-            <h1 className=" text-black font-medium ">Pay with</h1>
-            <div className=" relative w-[3.75rem] h-[1.125rem] ml-[0.375rem] ">
+          {!qrCode && (
+            <div className="flex items-center w-full justify-center landingDesktop:mt-[4.75rem] ">
+              <input
+                type="checkbox"
+                className="focus:ring-blue-500 h-4 w-4 text-blue-600"
+              />
+              <label
+                htmlFor="terms"
+                className="ml-2 text-[1.25rem] font-normal text-black text-center "
+              >
+                I accept the <span className=" text-[#00A7E1] ">terms</span> &{" "}
+                <span className=" text-[#00A7E1] ">conditions</span> of the pool
+              </label>
+            </div>
+          )}
+          {qrCode && (
+            <div className=" w-[12.5rem] h-[12.5rem] m-auto ">
               <Image
-                src="/assets/PNG/SolanaPayMark.png"
-                alt=""
-                layout="fill"
-                objectFit="cover"
+                src={qrCode}
+                style={{ position: "relative", background: "white" }}
+                alt="QR Code"
+                width={200}
+                height={200}
+                priority
               />
             </div>
-          </button>
+          )}
+          {!qrCode && (
+            <button
+              className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
+              onClick={handleGenerateClick}
+            >
+              <h1 className=" text-black font-medium ">Pay with</h1>
+              <div className=" relative w-[3.75rem] h-[1.125rem] ml-[0.375rem] ">
+                <Image
+                  src="/assets/PNG/SolanaPayMark.png"
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+            </button>
+          )}
           {reference && (
             <button
               className=" mt-[1.9375rem] text-black font-medium  w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
@@ -432,37 +444,43 @@ function ItemDescription({ item }: { item: ItemData }) {
               Verify Transaction
             </button>
           )}
-          <button
-            style={{
-              marginTop: "1.0625rem",
-              width: "100%",
-              height: "3.75rem",
-              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#9036D9",
-              borderRadius: "0.25rem",
-              transition: "background-color 0.3s",
-            }}
-            className=" hover:bg-purple-200 focus:bg-purple-300 "
-            onClick={handleSignTransaction}
-          >
-            <h1 className=" text-white font-medium ">Pay with</h1>
-            <div className=" relative w-[1.875rem] h-[1.5625rem] ml-[0.375rem] ">
-              <Image
-                src="/assets/PNG/phantom-ghost-white.png"
-                alt=""
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-          </button>
-          <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 rounded-[0.25rem] ">
-            <h1 className=" text-white font-medium ">More payments options</h1>
-          </button>
-          {qrCode && <QRCode value={qrCode} />}
+          {!qrCode && (
+            <button
+              style={{
+                marginTop: "1.0625rem",
+                width: "100%",
+                height: "3.75rem",
+                boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#9036D9",
+                borderRadius: "0.25rem",
+                transition: "background-color 0.3s",
+              }}
+              className=" hover:bg-purple-200 focus:bg-purple-300 "
+              onClick={handleSignTransaction}
+            >
+              <h1 className=" text-white font-medium ">Pay with</h1>
+              <div className=" relative w-[1.875rem] h-[1.5625rem] ml-[0.375rem] ">
+                <Image
+                  src="/assets/PNG/phantom-ghost-white.png"
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+            </button>
+          )}
+          {!qrCode && (
+            <button className=" mt-[1.0625rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 rounded-[0.25rem] ">
+              <h1 className=" text-white font-medium ">
+                More payments options
+              </h1>
+            </button>
+          )}
+          {/* {qrCode && <QRCode value={qrCode} />} */}
         </div>
       </Modal>
     </div>

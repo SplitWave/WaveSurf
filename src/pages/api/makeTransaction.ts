@@ -1,22 +1,18 @@
 import {
-  ADMIN_WALLET_ADDRESS,
-  NETWORK,
-} from "@/components/dashboard/ItemDescription";
-import {
   Connection,
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
-  SystemProgram,
-  Transaction,
-  sendAndConfirmTransaction,
 } from "@solana/web3.js";
-import base58 from "bs58";
 import { NextApiRequest, NextApiResponse } from "next";
 import { encodeURL, findReference, validateTransfer } from "@solana/pay";
 import BigNumber from "bignumber.js";
+import axios from "axios";
 
+const ADMIN_WALLET_ADDRESS = "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
+const NETWORK = "https://api.devnet.solana.com";
 const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
+//const amount = new BigNumber(0.0001);
 const label = "WaveSurf Store";
 const memo = "WaveSurf Solana Pay Memo";
 const paymentRequests = new Map<
@@ -24,23 +20,57 @@ const paymentRequests = new Map<
   { recipient: PublicKey; amount: BigNumber; memo: string }
 >();
 
+const SOL_PRICE_API =
+  "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd";
+
+async function getSolPriceInUSD(): Promise<number> {
+  try {
+    const response = await axios.get(SOL_PRICE_API);
+    const solPriceInUSD = parseFloat(response.data.solana.usd);
+
+    if (isNaN(solPriceInUSD)) {
+      throw new Error("Invalid SOL price");
+    }
+
+    return solPriceInUSD;
+  } catch (error) {
+    console.error("Error fetching SOL price:", error);
+    throw error;
+  }
+}
+
 async function generateUrl(
   recipient: PublicKey,
-  amount: BigNumber,
+  amountInUSD: number,
   reference: PublicKey,
   label: string,
   message: string,
   memo: string
 ) {
-  const url: URL = encodeURL({
-    recipient,
-    amount,
-    reference,
-    label,
-    message,
-    memo,
-  });
-  return { url };
+  try {
+    // Fetch the current SOL price in USD
+    const solPriceInUSD = await getSolPriceInUSD();
+
+    // Calculate the amount in SOL
+    const amountInSol = amountInUSD / solPriceInUSD;
+
+    // Convert amount from SOL to lamports
+    const amountInLamports = new BigNumber(amountInSol).times(LAMPORTS_PER_SOL);
+
+    const url: URL = encodeURL({
+      recipient,
+      amount: amountInLamports,
+      reference,
+      label,
+      message,
+      memo,
+    });
+
+    return { url };
+  } catch (error) {
+    console.error("Error generating URL:", error);
+    throw error;
+  }
 }
 
 async function verifyTransaction(reference: PublicKey) {
@@ -91,32 +121,52 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const { amount } = req.body;
-
       if (parseInt(amount) === 0) {
         return res
           .status(400)
           .json({ error: "Can't checkout with charge of 0" });
       }
       const reference = new Keypair().publicKey;
-      const bigAmount = new BigNumber(amount);
+      //const bigAmount = new BigNumber(amount);
       const message = `WaveSurf Store - Order ID #0${
         Math.floor(Math.random() * 999999) + 1
       }`;
       const { url } = await generateUrl(
         recipient,
-        bigAmount,
+        amount,
         reference,
         label,
         message,
         memo
       );
       const ref = reference.toBase58();
-      paymentRequests.set(ref, { recipient, amount: bigAmount, memo });
+      paymentRequests.set(ref, { recipient, amount, memo });
       res.status(200).json({ url: url.toString(), ref });
     } catch (error) {
       console.error("Error:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
+    //     try {
+    //       const reference = new Keypair().publicKey;
+    //       const message = `QuickNode Demo - Order ID #0${
+    //         Math.floor(Math.random() * 999999) + 1
+    //       }`;
+    //       const urlData = await generateUrl(
+    //         recipient,
+    //         amount,
+    //         reference,
+    //         label,
+    //         message,
+    //         memo
+    //       );
+    //       const ref = reference.toBase58();
+    //       paymentRequests.set(ref, { recipient, amount, memo });
+    //       const { url } = urlData;
+    //       res.status(200).json({ url: url.toString(), ref });
+    //     } catch (error) {
+    //       console.error("Error:", error);
+    //       res.status(500).json({ error: "Internal Server Error" });
+    //     }
   }
   //Hanle Verify Payment Requests
   else if (req.method === "GET") {
