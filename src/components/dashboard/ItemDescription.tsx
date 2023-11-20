@@ -14,14 +14,35 @@ import {
   signTransaction,
   createTransferTransaction,
 } from "@/utils";
-import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import { encodeURL } from "@solana/pay";
+import {
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import {
+  createQR,
+  encodeURL,
+  findReference,
+  FindReferenceError,
+  TransferRequestURLFields,
+  validateTransfer,
+  ValidateTransferError,
+} from "@solana/pay";
 import QRCode from "react-qr-code";
 import { TLog } from "../../../types";
-import { createQR } from "@solana/pay";
+
+import BigNumber from "bignumber.js";
 
 export const ADMIN_WALLET_ADDRESS =
   "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
+const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
+//const USDC_TOKEN_ADDRESS = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
+const USDC_TOKEN_ADDRESS = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
 export const NETWORK = "https://api.devnet.solana.com";
 const provider = getProvider();
 const connection = new Connection(NETWORK);
@@ -61,7 +82,25 @@ function ItemDescription({ item }: { item: ItemData }) {
   const [value, setValue] = useState<number>(50);
   const [logs, setLogs] = useState<TLog[]>([]);
   const [qrCode, setQrCode] = useState<string | undefined>(undefined);
-  const [reference, setReference] = useState<string>();
+  const [ref, setRef] = useState<PublicKey>();
+  const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
+  const reference = useMemo(() => Keypair.generate().publicKey, []);
+
+  const amount = BigNumber(value);
+
+  // Solana Pay transfer params
+  const urlParams: TransferRequestURLFields = {
+    recipient: recipient,
+    splToken: usdcAddress,
+    amount,
+    reference,
+    label: "WaveSurf Store",
+    message: "Thank you for using WaveSurf",
+  };
+
+  // Encode the params into the format shown
+  const url = encodeURL(urlParams);
+  //console.log({ url });
 
   const createLog = useCallback(
     (log: TLog) => {
@@ -75,23 +114,9 @@ function ItemDescription({ item }: { item: ItemData }) {
   }, [setLogs]);
 
   const handleGenerateClick = async () => {
-    // 1 - Send a POST request to our backend and log the response URL
-    const res = await fetch("/api/makeTransaction", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ amount: value }), // Include the amount from the state
-    });
-
-    const { url, ref } = await res.json();
-    console.log("url is:", url);
-
-    // 2 - Generate a QR Code from the URL and generate a blob
-    const qr = createQR(url);
+    const qr = createQR(url, 512, "transparent");
     const qrBlob = await qr.getRawData("png");
     if (!qrBlob) return;
-
     // 3 - Convert the blob to a base64 string (using FileReader) and set the QR code state
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -100,34 +125,69 @@ function ItemDescription({ item }: { item: ItemData }) {
       }
     };
     reader.readAsDataURL(qrBlob);
-
     // 4 - Set the reference state
-    setReference(ref);
+    console.log("ref is", reference.toBase58());
+    setRef(reference);
+    CheckPayment();
   };
 
-  const handleVerifyClick = async () => {
-    // 1 - Check if the reference is set
-    if (!reference) {
-      alert("Please generate a payment order first");
-      return;
-    }
-
-    // 2 - Send a GET request to our backend and return the response status
-    const res = await fetch(`/api/makeTransaction?reference=${reference}`);
-    const { status } = await res.json();
-
-    // 3 - Alert the user if the transaction was verified or not and reset the QR code and reference
-    if (status === "verified") {
-      alert("Transaction verified");
-      setQrCode(undefined);
-      setReference(undefined);
-      setIsModalOpen(false);
-    } else {
-      alert("Transaction not found");
-      setQrCode(undefined);
-      setReference(undefined);
-      setIsModalOpen(false);
-    }
+  const CheckPayment = () => {
+    // update payment status
+    //Check every 4s if the transaction is completed
+    const interval = setInterval(async () => {
+      try {
+        // Check if there is any transaction for the reference
+        console.log("checking for ref", reference.toBase58());
+        const refToValidate = reference;
+        const signatureInfo = await findReference(connection, refToValidate, {
+          finality: "confirmed",
+        });
+        // Validate that the transaction has the expected recipient, amount and SPL token
+        await validateTransfer(
+          connection,
+          signatureInfo.signature,
+          {
+            recipient: recipient,
+            amount,
+            splToken: usdcAddress,
+            reference: refToValidate,
+          },
+          { commitment: "confirmed" }
+        );
+        //router.push('/shop/confirmed')
+        alert("Transaction verified");
+        setQrCode(undefined);
+        setRef(undefined);
+        setPaymentStatus(true);
+        //setIsModalOpen(false);
+      } catch (e) {
+        if (e instanceof FindReferenceError) {
+          // No transaction found yet, ignore this error
+          // alert("Transaction not verified");
+          // setQrCode(undefined);
+          // setRef(undefined);
+          // setIsModalOpen(false);
+          return;
+        }
+        if (e instanceof ValidateTransferError) {
+          // Transaction is invalid
+          // console.error("Transaction is invalid", e);
+          // alert("Transaction not verified");
+          // setQrCode(undefined);
+          // setRef(undefined);
+          // setIsModalOpen(false);
+          return;
+        }
+        console.error("Unknown error", e);
+        // alert("Transaction not verified");
+        // setQrCode(undefined);
+        // setRef(undefined);
+        // setIsModalOpen(false);
+      }
+    }, 4000);
+    return () => {
+      clearInterval(interval);
+    };
   };
 
   useEffect(() => {
@@ -408,7 +468,7 @@ function ItemDescription({ item }: { item: ItemData }) {
               </label>
             </div>
           )}
-          {qrCode && (
+          {qrCode && !paymentStatus && (
             <div className=" w-[12.5rem] h-[12.5rem] m-auto ">
               <Image
                 src={qrCode}
@@ -420,6 +480,14 @@ function ItemDescription({ item }: { item: ItemData }) {
               />
             </div>
           )}
+          {paymentStatus && (
+            <div className=" w-[12.5rem] h-[12.5rem] m-auto ">
+              <p className="mt-4 text-green-500 text-center">
+                Payment Validated
+              </p>
+            </div>
+          )}
+          {/* {qrCode && <QRCode value={qrCode} />} */}
           {!qrCode && (
             <button
               className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
@@ -436,14 +504,7 @@ function ItemDescription({ item }: { item: ItemData }) {
               </div>
             </button>
           )}
-          {reference && (
-            <button
-              className=" mt-[1.9375rem] text-black font-medium  w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
-              onClick={handleVerifyClick}
-            >
-              Verify Transaction
-            </button>
-          )}
+
           {!qrCode && (
             <button
               style={{

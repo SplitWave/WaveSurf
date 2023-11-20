@@ -3,15 +3,34 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+  sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import { NextApiRequest, NextApiResponse } from "next";
-import { encodeURL, findReference, validateTransfer } from "@solana/pay";
+import {
+  TransferRequestURL,
+  encodeURL,
+  findReference,
+  parseURL,
+  validateTransfer,
+} from "@solana/pay";
 import BigNumber from "bignumber.js";
-import axios from "axios";
+import {
+  createTransferCheckedInstruction,
+  getAssociatedTokenAddress,
+  getMint,
+  getOrCreateAssociatedTokenAccount,
+} from "@solana/spl-token";
+import base58 from "bs58";
 
 const ADMIN_WALLET_ADDRESS = "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
+const USDC_TOKEN_ADDRESS = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
+const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
 const NETWORK = "https://api.devnet.solana.com";
 const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
+const connection = new Connection(NETWORK, "confirmed");
 //const amount = new BigNumber(0.0001);
 const label = "WaveSurf Store";
 const memo = "WaveSurf Solana Pay Memo";
@@ -20,57 +39,38 @@ const paymentRequests = new Map<
   { recipient: PublicKey; amount: BigNumber; memo: string }
 >();
 
-const SOL_PRICE_API =
-  "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd";
+export type MakeTransactionInputData = {
+  account: string;
+};
 
-async function getSolPriceInUSD(): Promise<number> {
-  try {
-    const response = await axios.get(SOL_PRICE_API);
-    const solPriceInUSD = parseFloat(response.data.solana.usd);
+export type MakeTransactionOutputData = {
+  transaction: string;
+  message: string;
+};
 
-    if (isNaN(solPriceInUSD)) {
-      throw new Error("Invalid SOL price");
-    }
-
-    return solPriceInUSD;
-  } catch (error) {
-    console.error("Error fetching SOL price:", error);
-    throw error;
-  }
-}
+type ErrorOutput = {
+  error: string;
+};
 
 async function generateUrl(
   recipient: PublicKey,
-  amountInUSD: number,
+  amount: BigNumber,
   reference: PublicKey,
+  splToken: PublicKey,
   label: string,
   message: string,
   memo: string
 ) {
-  try {
-    // Fetch the current SOL price in USD
-    const solPriceInUSD = await getSolPriceInUSD();
-
-    // Calculate the amount in SOL
-    const amountInSol = amountInUSD / solPriceInUSD;
-
-    // Convert amount from SOL to lamports
-    const amountInLamports = new BigNumber(amountInSol).times(LAMPORTS_PER_SOL);
-
-    const url: URL = encodeURL({
-      recipient,
-      amount: amountInLamports,
-      reference,
-      label,
-      message,
-      memo,
-    });
-
-    return { url };
-  } catch (error) {
-    console.error("Error generating URL:", error);
-    throw error;
-  }
+  const url: URL = encodeURL({
+    recipient,
+    amount,
+    splToken,
+    reference,
+    label,
+    message,
+    memo,
+  });
+  return { url };
 }
 
 async function verifyTransaction(reference: PublicKey) {
@@ -120,53 +120,88 @@ export default async function handler(
   //Handle Generate Payment Requests
   if (req.method === "POST") {
     try {
+      // We pass the reference to use in the query
+      const { reference } = req.query;
+      if (!reference) {
+        res.status(400).json({ error: "No reference provided" });
+        return;
+      }
       const { amount } = req.body;
       if (parseInt(amount) === 0) {
         return res
           .status(400)
           .json({ error: "Can't checkout with charge of 0" });
       }
-      const reference = new Keypair().publicKey;
-      //const bigAmount = new BigNumber(amount);
-      const message = `WaveSurf Store - Order ID #0${
-        Math.floor(Math.random() * 999999) + 1
-      }`;
-      const { url } = await generateUrl(
-        recipient,
-        amount,
-        reference,
-        label,
-        message,
-        memo
+
+      const { account } = req.body as MakeTransactionInputData;
+      if (!account) {
+        res.status(400).json({ error: "No account provided" });
+        return;
+      }
+
+      const buyerPublicKey = new PublicKey(account);
+      const shopPublicKey = new PublicKey(ADMIN_WALLET_ADDRESS);
+
+      // Get details about the USDC token
+      const usdcMint = await getMint(connection, usdcAddress);
+      // Get the buyer's USDC token account address
+      const buyerUsdcAddress = await getAssociatedTokenAddress(
+        usdcAddress,
+        buyerPublicKey
       );
-      const ref = reference.toBase58();
-      paymentRequests.set(ref, { recipient, amount, memo });
-      res.status(200).json({ url: url.toString(), ref });
+      // Get the shop's USDC token account address
+      const shopUsdcAddress = await getAssociatedTokenAddress(
+        usdcAddress,
+        shopPublicKey
+      );
+
+      // Get a recent blockhash to include in the transaction
+      const { blockhash } = await connection.getLatestBlockhash("finalized");
+
+      const transaction = new Transaction({
+        recentBlockhash: blockhash,
+        // The buyer pays the transaction fee
+        feePayer: buyerPublicKey,
+      });
+
+      // Create the instruction to send USDC from the buyer to the shop
+      const transferInstruction = createTransferCheckedInstruction(
+        buyerUsdcAddress, // source
+        usdcAddress, // mint (token address)
+        shopUsdcAddress, // destination
+        buyerPublicKey, // owner of source address
+        amount.toNumber() * 10 ** (await usdcMint).decimals, // amount to transfer (in units of the USDC token)
+        usdcMint.decimals // decimals of the USDC token
+      );
+
+      // Add the reference to the instruction as a key
+      // This will mean this transaction is returned when we query for the reference
+      transferInstruction.keys.push({
+        pubkey: new PublicKey(reference),
+        isSigner: false,
+        isWritable: false,
+      });
+
+      // Add the instruction to the transaction
+      transaction.add(transferInstruction);
+
+      // Serialize the transaction and convert to base64 to return it
+      const serializedTransaction = transaction.serialize({
+        // We will need the buyer to sign this transaction after it's returned to them
+        requireAllSignatures: false,
+      });
+      const base64 = serializedTransaction.toString("base64");
+      // Insert into database: reference, amount
+
+      // Return the serialized transaction
+      res.status(200).json({
+        transaction: base64,
+        message: "Thanks for your order! 🍪",
+      });
     } catch (error) {
       console.error("Error:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: "error creating transaction" });
     }
-    //     try {
-    //       const reference = new Keypair().publicKey;
-    //       const message = `QuickNode Demo - Order ID #0${
-    //         Math.floor(Math.random() * 999999) + 1
-    //       }`;
-    //       const urlData = await generateUrl(
-    //         recipient,
-    //         amount,
-    //         reference,
-    //         label,
-    //         message,
-    //         memo
-    //       );
-    //       const ref = reference.toBase58();
-    //       paymentRequests.set(ref, { recipient, amount, memo });
-    //       const { url } = urlData;
-    //       res.status(200).json({ url: url.toString(), ref });
-    //     } catch (error) {
-    //       console.error("Error:", error);
-    //       res.status(500).json({ error: "Internal Server Error" });
-    //     }
   }
   //Hanle Verify Payment Requests
   else if (req.method === "GET") {
