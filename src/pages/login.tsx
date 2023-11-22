@@ -3,64 +3,166 @@ import { FaGoogle, FaApple } from "react-icons/fa";
 import { PiTelegramLogo } from "react-icons/pi";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
-import Link from "next/link";
-import { magic } from "@/lib/magic";
 import { useRouter } from "next/router";
-import { UserContext } from "@/context/UserContext";
+import { useWeb3Auth } from "@/context/Web3AuthContext";
+import { Web3AuthNoModal } from "@web3auth/no-modal";
+import { CHAIN_NAMESPACES, IProvider, WALLET_ADAPTERS } from "@web3auth/base";
+import {
+  OpenloginAdapter,
+  OpenloginUserInfo,
+} from "@web3auth/openlogin-adapter";
+import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
+import { db } from "@/lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import RPC from "../hooks/solanaRPC";
+
+export interface UserData {
+  user: OpenloginUserInfo;
+  address: string[];
+}
 
 const LoginPage = () => {
-  const router = useRouter();
-  const [user, setUser] = useContext(UserContext);
+  //const [user, setUser] = useContext(UserContext);
   const initialValues = {
     email: "",
   };
   const [disabled, setDisabled] = useState<boolean>(false);
+  const clientId =
+    "BJsCGNF_TNTjH-dMR0yK_-c9MkZDr8uhVFV4KrXNj51rDRcx33uqOJOY7ESb_uIiko0gaKsgJSEhS_o5SR3MJHA";
+  const router = useRouter();
+  const {
+    user,
+    web3auth,
+    loggedIn,
+    provider,
+    setProvider,
+    setLoggedIn,
+    setWeb3auth,
+    getUserInfo,
+  } = useWeb3Auth();
 
-  // Redirect to /dashboard if the user is logged in
   useEffect(() => {
-    user?.user?.issuer && router.push("/dashboard");
-  }, [user]);
+    const init = async () => {
+      try {
+        const chainConfig = {
+          chainNamespace: CHAIN_NAMESPACES.SOLANA,
+          chainId: "0x1", // Please use 0x1 for Mainnet, 0x2 for Testnet, 0x3 for Devnet
+          rpcTarget: "https://far-didi-fast-mainnet.helius-rpc.com/",
+          displayName: "Solana Mainnet Beta",
+          blockExplorer: "https://solana.fm/",
+          ticker: "SOL",
+          tickerName: "Solana",
+        };
+        const web3auth = new Web3AuthNoModal({
+          clientId,
+          chainConfig,
+          web3AuthNetwork: "cyan",
+        });
 
-  async function handleLoginWithEmail(email: string) {
-    try {
-      setDisabled(true); // disable login button to prevent multiple emails from being triggered
+        setWeb3auth(web3auth);
+        const privateKeyProvider = new SolanaPrivateKeyProvider({
+          config: { chainConfig },
+        });
 
-      // Trigger Magic link to be sent to user
-      let didToken = await magic?.auth.loginWithMagicLink({
-        email,
-        redirectURI: new URL("/callback", window.location.origin).href, // optional redirect back to your app after magic link is clicked
-      });
+        const openloginAdapter = new OpenloginAdapter({
+          privateKeyProvider,
+          adapterSettings: {
+            uxMode: "redirect",
+          },
+        });
+        web3auth.configureAdapter(openloginAdapter);
 
-      // Validate didToken with server
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + didToken,
-        },
-      });
+        await web3auth.init();
+        setProvider(web3auth.provider);
+        if (web3auth.connected) {
+          setLoggedIn(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-      if (res.status === 200) {
-        // Set the UserContext to the now logged in user
-        let userMetadata = await magic?.user.getMetadata();
-        console.log("userMetadata", userMetadata);
-        await setUser({ user: userMetadata });
+    init();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (loggedIn === true) {
+        await getUserInfo();
+
+        const address = await getAccounts();
+
+        if (user && address) {
+          addDataToFirestore(user.verifierId, { user, address });
+        }
+
         router.push("/dashboard");
       }
-    } catch (error) {
-      setDisabled(false); // re-enable login button - user may have requested to edit their email
-      console.log(error);
+    };
+
+    fetchData();
+  }, [loggedIn, router, getUserInfo]);
+
+  // for uiConsole
+  function uiConsole(...args: any[]): void {
+    const el = document.querySelector("#console>p");
+    if (el) {
+      el.innerHTML = JSON.stringify(args || {}, null, 2);
     }
   }
+  const login = async () => {
+    if (!web3auth) {
+      uiConsole("web3auth not initialized yet");
+      return;
+    }
+    const web3authProvider = await web3auth.connectTo(
+      WALLET_ADAPTERS.OPENLOGIN,
+      {
+        loginProvider: "google",
+      }
+    );
+    setProvider(web3authProvider);
+    setLoggedIn(true);
+  };
 
-  async function handleLoginWithSocial() {
-    await magic?.oauth.loginWithRedirect({
-      provider: "google", // google, apple, etc
-      redirectURI: new URL("/callback", window.location.origin).href, // required redirect to finish social login
-    });
-  }
+  async function handleLoginWithEmail(email: string) {}
+  // Function to add data to Firestore
+  const addDataToFirestore = async (userId: string, dataToAdd: UserData) => {
+    try {
+      // Check if the document already exists
+      const docRef = doc(db, "usermetadata", userId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Document already exists, updating data:");
+        // If the document exists, you can update the data if needed
+        //await updateDoc(docRef, dataToAdd);
+      } else {
+        console.log("Document does not exist, creating new document.");
+        // If the document does not exist, create a new one
+        await setDoc(docRef, dataToAdd);
+      }
+
+      console.log("Data added to Firestore successfully!");
+    } catch (error) {
+      console.error("Error adding data to Firestore:", error);
+      // Handle errors as needed
+    }
+  };
+
+  const getAccounts = async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const address = await rpc.getAccounts();
+    //console.log("address = ", address);
+    uiConsole(address);
+    return address;
+  };
 
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
@@ -107,7 +209,7 @@ const LoginPage = () => {
             </div>
             <div
               className=" w-[4.6875rem] h-[4.6875rem] rounded-[0.9375rem] text-black border-[0.0625rem] border-gray-200 flex items-center justify-center "
-              onClick={handleLoginWithSocial}
+              onClick={login}
             >
               <FaGoogle size={31} />
             </div>

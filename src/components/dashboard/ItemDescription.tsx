@@ -44,7 +44,6 @@ const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
 const USDC_TOKEN_ADDRESS = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
 const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
 export const NETWORK = "https://api.devnet.solana.com";
-const provider = getProvider();
 const connection = new Connection(NETWORK);
 const message = "Sign below to authenticate with Wavesurf.";
 
@@ -85,6 +84,7 @@ function ItemDescription({ item }: { item: ItemData }) {
   const [ref, setRef] = useState<PublicKey>();
   const [paymentStatus, setPaymentStatus] = useState<boolean>(false);
   const reference = useMemo(() => Keypair.generate().publicKey, []);
+  const provider = getProvider();
 
   const amount = BigNumber(value);
 
@@ -243,7 +243,7 @@ function ItemDescription({ item }: { item: ItemData }) {
           message: "Attempting to switch accounts.",
         });
 
-        provider.connect().catch((error) => {
+        provider.connect().catch((error: any) => {
           createLog({
             status: "error",
             method: "accountChanged",

@@ -4,29 +4,11 @@ import React, { Fragment, useContext } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { Menu, Transition } from "@headlessui/react";
 import { BiLogOut } from "react-icons/bi";
-import { magic } from "@/lib/magic";
-import Router from "next/router";
-import { useEffect, useState } from "react";
-import { Web3AuthNoModal } from "@web3auth/no-modal";
-import {
-  CHAIN_NAMESPACES,
-  IProvider,
-  WALLET_ADAPTERS,
-} from "@web3auth/base";
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
-import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
-import RPC from "../../hooks/solanaRPC";
+import { useWeb3Auth } from "@/context/Web3AuthContext";
 
 function Header() {
-  const [user, setUser] = useContext(UserContext);
-  console.log("user :", user);
+  const { user, web3auth, setProvider, setLoggedIn } = useWeb3Auth();
 
-  const logout = () => {
-    magic?.user.logout().then(() => {
-      setUser({ user: null });
-      Router.push("/login");
-    });
-  };
   const logout = async () => {
     if (!web3auth) {
       uiConsole("web3auth not initialized yet");
@@ -37,22 +19,13 @@ function Header() {
     setLoggedIn(false);
   };
 
-  const getAccounts = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const rpc = new RPC(provider);
-    const address = await rpc.getAccounts();
-    uiConsole(address);
-  };
-
   function uiConsole(...args: any[]): void {
     const el = document.querySelector("#console>p");
     if (el) {
       el.innerHTML = JSON.stringify(args || {}, null, 2);
     }
   }
+
   return (
     <div className=" bg-white w-full py-[0.625rem] flex flex-row items-center landingDesktop:justify-between ">
       <div className=" flex flex-row items-center landingDesktop:ml-[0.625rem] ">
@@ -77,9 +50,9 @@ function Header() {
           <div>
             <Menu.Button className="  border-l-[0.125rem] border-l-[#C0CCDA] px-[1.25rem]  landingDesktop:flex landingDesktop:flex-row hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 ">
               <div className=" ">
-                {user?.user?.issuer && (
+                {user?.email && (
                   <h1 className=" text-black text-center text-[1.125rem] font-light ">
-                    {user?.user?.email}
+                    {user?.email}
                   </h1>
                 )}
                 <h1 className=" text-[#FF731C] text-[1.25rem] font-medium text-center ">
