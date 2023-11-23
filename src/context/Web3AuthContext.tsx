@@ -2,9 +2,11 @@ import { IProvider } from "@web3auth/base";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { createContext, useState, useContext } from "react";
 import { OpenloginUserInfo } from "@web3auth/openlogin-adapter";
+import RPC from "../hooks/solanaRPC";
 
 interface Web3AuthContextProps {
   user: OpenloginUserInfo | null;
+  address: string[] | null;
   web3auth: Web3AuthNoModal | null;
   provider: IProvider | null;
   loggedIn: boolean | null;
@@ -12,6 +14,7 @@ interface Web3AuthContextProps {
   setProvider: React.Dispatch<React.SetStateAction<IProvider | null>>;
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean | null>>;
   getUserInfo: () => Promise<void>;
+  getAccounts: () => Promise<string[] | null>;
 }
 
 export const Web3AuthContext = createContext<Web3AuthContextProps | undefined>(
@@ -25,6 +28,7 @@ export const Web3AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [web3auth, setWeb3auth] = useState<Web3AuthNoModal | null>(null);
   const [provider, setProvider] = useState<IProvider | null>(null);
   const [loggedIn, setLoggedIn] = useState<boolean | null>(false);
+  const [address, setAddress] = useState<string[] | null>(null);
 
   const getUserInfo = async () => {
     if (!web3auth) {
@@ -43,10 +47,24 @@ export const Web3AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const getAccounts = async () => {
+    if (!provider) {
+      console.error("provider not initialized yet");
+      return null;
+    }
+    const rpc = new RPC(provider);
+    const accounts = await rpc.getAccounts();
+
+    // Update the address state in the context
+    setAddress(accounts);
+    return accounts;
+  };
+
   return (
     <Web3AuthContext.Provider
       value={{
         user,
+        address,
         web3auth,
         provider,
         loggedIn,
@@ -54,6 +72,7 @@ export const Web3AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setProvider,
         setLoggedIn,
         getUserInfo,
+        getAccounts,
       }}
     >
       {children}

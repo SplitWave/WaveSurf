@@ -7,7 +7,7 @@ import { BiLogOut } from "react-icons/bi";
 import { useWeb3Auth } from "@/context/Web3AuthContext";
 
 function Header() {
-  const { user, web3auth, setProvider, setLoggedIn } = useWeb3Auth();
+  const { user, web3auth, setProvider, setLoggedIn, address } = useWeb3Auth();
 
   const logout = async () => {
     if (!web3auth) {
@@ -61,12 +61,22 @@ function Header() {
               </div>
               <div className="text-black flex flex-row items-center ml-[0.9375rem] ">
                 <div className=" w-[3rem] h-[3rem] relative ">
-                  <Image
-                    src="/assets/SVG/avatar.svg"
-                    alt=""
-                    layout="fill"
-                    objectFit="cover"
-                  />
+                  {user?.profileImage ? (
+                    <Image
+                      src={user?.profileImage}
+                      alt=""
+                      layout="fill"
+                      objectFit="cover"
+                      className=" rounded-[2.5rem] "
+                    />
+                  ) : (
+                    <Image
+                      src="/assets/SVG/avatar.svg"
+                      alt=""
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  )}
                 </div>
                 <FaChevronDown className=" w-[1rem] h-[1rem] ml-[0.625rem] " />
               </div>
@@ -82,12 +92,24 @@ function Header() {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className=" font-normal w-full bg-white text-black absolute flex flex-row rounded-[0.625rem] items-center justify-start p-4 "
+              className=" absolute w-full p-4 rounded-[0.625rem] bg-white "
               as="div"
-              onClick={logout}
             >
-              <BiLogOut size={24} />
-              <h1 className=" ml-[0.625rem] text-[1rem] ">Log out</h1>
+              <Menu.Item className="w-full" as="div">
+                {address && (
+                  <h1 className=" text-black w-full flex-start text-[1.125rem] font-light ml-[0.625rem] mb-[0.625rem] ">
+                    {address?.[0].slice(0, 30)}.....
+                  </h1>
+                )}
+              </Menu.Item>
+              <Menu.Item
+                className=" font-normal  text-black  flex flex-row  items-center justify-start "
+                as="div"
+                onClick={logout}
+              >
+                <BiLogOut size={24} />
+                <h1 className=" ml-[0.625rem] text-[1rem] ">Log out</h1>
+              </Menu.Item>
             </Menu.Items>
           </Transition>
         </Menu>

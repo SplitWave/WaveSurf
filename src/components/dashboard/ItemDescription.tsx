@@ -14,15 +14,7 @@ import {
   signTransaction,
   createTransferTransaction,
 } from "@/utils";
-import {
-  Connection,
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction,
-} from "@solana/web3.js";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import {
   createQR,
   encodeURL,
@@ -32,7 +24,6 @@ import {
   validateTransfer,
   ValidateTransferError,
 } from "@solana/pay";
-import QRCode from "react-qr-code";
 import { TLog } from "../../../types";
 
 import BigNumber from "bignumber.js";
@@ -41,10 +32,11 @@ export const ADMIN_WALLET_ADDRESS =
   "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
 const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
 //const USDC_TOKEN_ADDRESS = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
-const USDC_TOKEN_ADDRESS = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+const USDC_TOKEN_ADDRESS = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
 export const NETWORK = "https://api.devnet.solana.com";
-const connection = new Connection(NETWORK);
+export const MAINNET = "https://api.mainnet-beta.solana.com";
+const connection = new Connection(MAINNET);
 const message = "Sign below to authenticate with Wavesurf.";
 
 export type ConnectedMethods =

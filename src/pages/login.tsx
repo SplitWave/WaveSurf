@@ -41,6 +41,7 @@ const LoginPage = () => {
     setLoggedIn,
     setWeb3auth,
     getUserInfo,
+    getAccounts,
   } = useWeb3Auth();
 
   useEffect(() => {
@@ -150,18 +151,6 @@ const LoginPage = () => {
       console.error("Error adding data to Firestore:", error);
       // Handle errors as needed
     }
-  };
-
-  const getAccounts = async () => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const rpc = new RPC(provider);
-    const address = await rpc.getAccounts();
-    //console.log("address = ", address);
-    uiConsole(address);
-    return address;
   };
 
   const validationSchema = Yup.object({
