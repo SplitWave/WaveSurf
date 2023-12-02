@@ -34,8 +34,8 @@ const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
 //const USDC_TOKEN_ADDRESS = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
 const USDC_TOKEN_ADDRESS = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
-export const NETWORK = "https://api.devnet.solana.com";
-export const MAINNET = "https://api.mainnet-beta.solana.com";
+export const NETWORK = "https://far-didi-fast-mainnet.helius-rpc.com/";
+export const MAINNET = "https://far-didi-fast-mainnet.helius-rpc.com/";
 const connection = new Connection(MAINNET);
 const message = "Sign below to authenticate with Wavesurf.";
 
