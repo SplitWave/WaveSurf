@@ -107,7 +107,7 @@ function Header() {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className=" absolute mobile:w-1/3 landingDesktop:w-full p-4 rounded-[0.625rem] bg-gray-100 "
+              className=" absolute mobile:w-2/3 landingDesktop:w-full p-4 rounded-[0.625rem] bg-gray-100 "
               as="div"
             >
               <Menu.Item className="w-full" as="div">
