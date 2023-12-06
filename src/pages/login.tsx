@@ -203,16 +203,10 @@ const LoginPage = () => {
               <FaGoogle size={31} />
             </div>
           </div>
-          <h1 className="   font-medium text-center text-[1.125rem] text-gray-400 my-[1.3125rem] ">
+          {/* <h1 className="   font-medium text-center text-[1.125rem] text-gray-400 my-[1.3125rem] ">
             or
-          </h1>
-          {/* <div className=" mt-[1.25rem] ">
-            <EmailForm
-              disabled={disabled}
-              onEmailSubmit={handleLoginWithEmail}
-            />
-          </div> */}
-          <Formik
+          </h1> */}
+          {/* <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={onSubmit}
@@ -259,7 +253,7 @@ const LoginPage = () => {
                 </button>
               </div>
             </Form>
-          </Formik>
+          </Formik> */}
         </div>
       </div>
     </div>

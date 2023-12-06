@@ -1,10 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Inter, Poppins } from "next/font/google";
-import { UserContext, UserContextType } from "../context/UserContext";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { magic } from "@/lib/magic";
 import { Web3AuthProvider } from "@/context/Web3AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({

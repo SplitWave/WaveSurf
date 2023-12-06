@@ -181,7 +181,7 @@ const SignInPage = () => {
       <div className=" w-full h-full relative py-[6.25rem]">
         <div className=" m-auto mobile:w-4/5 landingDesktop:w-[28.25rem] z-20 rounded-[0.9375rem] bg-white shadow-md py-[2rem] mobile:px-[0.9375rem] landingDesktop:px-0 ">
           <h1 className=" font-medium text-[1.125rem] text-center text-gray-700 ">
-            Login with
+            Signin with
           </h1>
           <div className=" w-4/5 mobile:mt-[0.9375rem] landingDesktop:mt-[2.1875rem] justify-evenly m-auto flex flex-row items-center ">
             <div

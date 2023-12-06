@@ -107,13 +107,13 @@ function Header() {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className=" absolute mobile:w-2/3 landingDesktop:w-full p-4 rounded-[0.625rem] bg-gray-100 "
+              className=" absolute w-full p-4 rounded-[0.625rem] bg-gray-100 "
               as="div"
             >
               <Menu.Item className="w-full" as="div">
                 {address && (
-                  <h1 className=" text-black w-full landingDesktop:flex-start landingDesktop:text-[1.125rem] mobile:text-[0.875rem] font-light landingDesktop:ml-[0.625rem] mb-[0.625rem] ">
-                    {address?.[0].slice(0, 30)}.....
+                  <h1 className=" text-black w-full landingDesktop:flex-start landingDesktop:text-[0.75rem]  font-light landingDesktop:ml-[0.3125rem] mb-[0.625rem] ">
+                    {address?.[0]}
                   </h1>
                 )}
               </Menu.Item>
@@ -187,13 +187,13 @@ function Header() {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items
-                className=" absolute w-full p-4 rounded-[0.625rem] bg-gray-100 "
+                className=" absolute w-5/6 p-4 rounded-[0.625rem] bg-gray-100 "
                 as="div"
               >
                 <Menu.Item className="w-full" as="div">
                   {address && (
-                    <h1 className=" text-black w-full flex-start landingDesktop:text-[1.125rem] mobile:text-[0.875rem] font-light landingDesktop:ml-[0.625rem] mb-[0.625rem] ">
-                      {address?.[0].slice(0, 30)}.....
+                    <h1 className=" text-black w-full flex-start  text-[0.625rem] font-light landingDesktop:ml-[0.625rem] mb-[0.625rem] ">
+                      {address?.[0]}
                     </h1>
                   )}
                 </Menu.Item>
