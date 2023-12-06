@@ -37,7 +37,6 @@ const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
 export const NETWORK = "https://api.devnet.solana.com";
 export const MAINNET = "https://api.mainnet-beta.solana.com";
 const connection = new Connection(MAINNET);
-const message = "Sign below to authenticate with Wavesurf.";
 
 export type ConnectedMethods =
   | {
@@ -291,9 +290,9 @@ function ItemDescription({ item }: { item: ItemData }) {
   }
 
   return (
-    <div className=" w-full ">
-      <div className=" w-full landingDesktop:h-full bg-white landingDesktop:py-[2.4375rem]  ">
-        <div className=" w-full landingDesktop:pl-[1.25rem] landingDesktop:pr-[1.25rem] landingDesktop:flex landingDesktop:flex-row landingDesktop:justify-between items-center ">
+    <div className=" w-full  ">
+      <div className=" w-full landingDesktop:h-full bg-white mobile:py-4 landingDesktop:py-[2.4375rem] mobile:mt-5 landingDesktop:mt-0 mobile:rounded-md landingDesktop:rounded-none ">
+        <div className=" w-full mobile:px-2  landingDesktop:pl-[1.25rem] landingDesktop:pr-[1.25rem] flex landingDesktop:flex-row landingDesktop:justify-between items-center ">
           {isLoading ? (
             <ThreeDots
               height="80"
@@ -303,15 +302,15 @@ function ItemDescription({ item }: { item: ItemData }) {
               ariaLabel="loading"
             />
           ) : (
-            <div className=" landingDesktop:flex landingDesktop:flex-row items-center ">
-              <div className=" relative w-[5rem] h-[5rem] ">
+            <div className=" flex landingDesktop:flex-row items-center ">
+              <div className=" relative landingDesktop:w-[5rem] landingDesktop:h-[5rem] mobile:w-[3.125rem] mobile:h-[3.125rem] ">
                 <Image src={item.img} alt="" layout="fill" objectFit="cover" />
               </div>
-              <div className="  font-light ml-[0.625rem] ">
-                <h1 className=" text-[1.375rem] text-center text-black ">
+              <div className="  font-light mobile:ml-1 landingDesktop:ml-[10px] ">
+                <h1 className=" mobile:text-[0.875rem] landingDesktop:text-[1.375rem] text-center text-black ">
                   {item.name}
                 </h1>
-                <h1 className=" flex flex-row items-center text-[1.125rem]  ml-[1.25rem] text-[#636363] ">
+                <h1 className=" flex flex-row items-center landingDesktop:text-[1.125rem] mobile:text-[0.875rem] ml-[1.25rem] text-[#636363] ">
                   WaveSurf{" "}
                   <PiSealCheckFill
                     color="#3897F0"
@@ -331,11 +330,11 @@ function ItemDescription({ item }: { item: ItemData }) {
             />
           ) : (
             <div className="  font-light ml-[0.9375rem] ">
-              <h1 className=" text-[1.375rem] text-center text-black ">
+              <h1 className=" mobile:text-[0.75rem] landingDesktop:text-[1.375rem] text-center text-black ">
                 {item.price}
               </h1>
               <h1
-                className={` text-[1.125rem]  ${
+                className={` mobile:text-[0.75rem] landingDesktop:text-[1.125rem]  ${
                   item.isNegative ? "text-[#DA1919]" : "text-[#2F982D]"
                 } `}
               >
@@ -345,12 +344,12 @@ function ItemDescription({ item }: { item: ItemData }) {
             </div>
           )}
         </div>
-        <div className=" w-full landingDesktop:pl-[1.25rem] landingDesktop:pr-[1.25rem] landingDesktop:pt-[2.4375rem]  landingDesktop:flex landingDesktop:flex-row landingDesktop:justify-between items-center ">
+        <div className=" w-full px-5 mobile:pt-3 landingDesktop:pt-[2.4375rem] flex flex-row justify-between items-center ">
           <button
-            className=" w-[8.75rem] h-[3.8125rem] bg-[#00A7E1] rounded-[0.75rem] flex items-center justify-center "
+            className=" mobile:w-[7.5rem] landingDesktop:w-[8.75rem] h-[3.8125rem] bg-[#00A7E1] rounded-[0.75rem] flex items-center justify-center "
             onClick={openModal}
           >
-            <h1 className=" text-white text-center font-normal text-[1.375rem] ">
+            <h1 className=" text-white text-center font-normal mobile:text-[1rem] landingDesktop:text-[1.375rem] ">
               BUY
             </h1>
           </button>
@@ -363,8 +362,8 @@ function ItemDescription({ item }: { item: ItemData }) {
               ariaLabel="loading"
             />
           ) : (
-            <button className=" w-[11.25rem] h-[3.625rem] bg-gray-300 rounded-[2.4375rem] flex items-center justify-center ">
-              <h1 className=" flex flex-row  items-center text-[#565656] text-center font-normal text-[1.125rem] ">
+            <button className=" mobile:w-[10rem] landingDesktop:w-[11.25rem] h-[3.625rem] bg-gray-300 rounded-[2.4375rem] flex items-center justify-center ">
+              <h1 className=" flex flex-row  items-center text-[#565656] text-center font-normal mobile:text-[1rem] landingDesktop:text-[18px] ">
                 <BsCircleFill color="#3FBFA0" className="mr-[0.625rem]" /> POOL
                 <span className=" font-light ml-[0.3125rem] ">OPEN</span>
               </h1>
@@ -374,10 +373,12 @@ function ItemDescription({ item }: { item: ItemData }) {
       </div>
       <Disclosure
         as="div"
-        className=" w-full landingDesktop:h-full bg-white landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[0.9375rem] "
+        className=" w-full landingDesktop:h-full bg-white mobile:px-3 mobile:py-3 landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[0.9375rem] mobile:mt-5  mobile:rounded-md landingDesktop:rounded-none "
       >
-        <Disclosure.Button className=" w-full landingDesktop:flex landingDesktop:flex-row items-center landingDesktop:justify-between text-black ">
-          <h1 className=" font-light text-[1.5rem] ">Fund details </h1>
+        <Disclosure.Button className=" w-full flex flex-row items-center justify-between text-black ">
+          <h1 className=" font-light mobile:text-[1.25rem] landingDesktop:text-[1.5rem] ">
+            Fund details{" "}
+          </h1>
           <BsChevronDown />
         </Disclosure.Button>
         <Disclosure.Panel className=" text-black ">
@@ -413,9 +414,9 @@ function ItemDescription({ item }: { item: ItemData }) {
         </Disclosure.Panel>
       </Disclosure>
       <Modal open={IsModalOpen} onClose={closeModal}>
-        <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md  m-auto py-[2.1875rem] px-[3rem] ">
+        <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md mobile:mx-3   landingDesktop:m-auto py-[2.1875rem] px-[3rem] ">
           <div className=" flex flex-row items-center justify-center text-black w-full  ">
-            <h1 className=" text-[1.5rem] font-normal text-center  ">
+            <h1 className=" mobile:text-[1.25rem] landingDesktop:text-[1.5rem] font-normal text-center  ">
               Buy {item.name}
             </h1>
             <AiOutlineClose
@@ -424,7 +425,7 @@ function ItemDescription({ item }: { item: ItemData }) {
               onClick={closeModal}
             />
           </div>
-          <h1 className=" text-[#00A7E1] text-center text-[3.125rem] font-medium mt-[0.625rem]  ">
+          <h1 className=" text-[#00A7E1] text-center mobile:text-[2.5rem] landingDesktop:text-[3.125rem] font-medium mt-[0.625rem]  ">
             £ {value}
           </h1>
           {!qrCode && (
@@ -440,7 +441,7 @@ function ItemDescription({ item }: { item: ItemData }) {
                   rail: railStyle,
                 }}
               />
-              <h1 className=" text-[1.5rem] font-normal mt-[2.125rem] ">
+              <h1 className=" mobile:text-[1.25rem] landingDesktop:text-[1.5rem] font-normal mt-[2.125rem] ">
                 <span className=" text-[#00A7E1] ">{value}</span>% of pool
               </h1>
             </div>
@@ -453,7 +454,7 @@ function ItemDescription({ item }: { item: ItemData }) {
               />
               <label
                 htmlFor="terms"
-                className="ml-2 text-[1.25rem] font-normal text-black text-center "
+                className="ml-2 mobile:text-[1rem] landingDesktop:text-[1.25rem] font-normal text-black text-center "
               >
                 I accept the <span className=" text-[#00A7E1] ">terms</span> &{" "}
                 <span className=" text-[#00A7E1] ">conditions</span> of the pool

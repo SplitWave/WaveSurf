@@ -14,27 +14,6 @@ const poppins = Poppins({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  //const router = useRouter();
-  //const [user, setUser] = useState<UserContextType>();
-
-  // If isLoggedIn is true, set the UserContext with user data
-  // Otherwise, redirect to /login and set UserContext to { user: null }
-  // useEffect(() => {
-  //   setUser({ loading: true });
-  //   //console.log("magic data", magic?.user);
-  //   magic?.user.isLoggedIn().then((isLoggedIn: boolean) => {
-  //     if (isLoggedIn) {
-  //       magic?.user.getMetadata().then((userData: any) => {
-  //         console.log("userdata in app.tsx", userData);
-  //         setUser(userData);
-  //       });
-  //     } else {
-  //       router.push("/login");
-  //       setUser({ user: null });
-  //     }
-  //   });
-  // }, []);
-
   return (
     <Web3AuthProvider>
       <main className={` ${inter.className} ${poppins.variable} `}>

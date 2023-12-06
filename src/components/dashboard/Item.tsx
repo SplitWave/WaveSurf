@@ -16,7 +16,7 @@ export type ItemData = {
 function Item({ selected, item }: { selected: boolean; item: ItemData }) {
   return (
     <div
-      className={` outline-none focus:outline-none landingDesktop:w-full p-[1.125rem] rounded-[0.125rem] landingDesktop:h-[13.75rem] bg-white ${
+      className={` outline-none focus:outline-none mobile:mt-3 landingDesktop:mt-0 w-full p-[1.125rem] mobile:rounded-md landingDesktop:rounded-[0.125rem] landingDesktop:h-[13.75rem] bg-white ${
         selected && "bg-[#F6F6F6]"
       } `}
     >
@@ -30,7 +30,7 @@ function Item({ selected, item }: { selected: boolean; item: ItemData }) {
           <Image src={item.img} alt="" layout="fill" objectFit="cover" />
         </div>
         <div className="  font-light ml-[0.9375rem] ">
-          <h1 className=" text-[1.125rem] text-center text-black ">
+          <h1 className=" mobile:text-[0.875rem] landingDesktop:text-[1.125rem] text-center text-black ">
             {item.name}
           </h1>
           <h1 className=" text-[0.75rem]  ml-[1.25rem] text-[#636363] ">
@@ -38,7 +38,7 @@ function Item({ selected, item }: { selected: boolean; item: ItemData }) {
           </h1>
         </div>
         <div className="  font-light ml-[0.9375rem] ">
-          <h1 className=" text-[1.125rem] text-center text-black ">
+          <h1 className=" mobile:text-[0.875rem] text-[1.125rem] text-center text-black ">
             {item.price}
           </h1>
           <h1

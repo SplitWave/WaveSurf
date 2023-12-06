@@ -5,13 +5,13 @@ import FeaturedFunds from "./FeaturedFunds";
 
 function DashboardHome() {
   return (
-    <div className="flex landingDesktop:pl-[1.375rem] mt-[1.375rem] w-full ">
+    <div className="flex mobile:flex-col landingDesktop:flex-row landingDesktop:pl-[1.375rem] landingDesktop:mt-[1.375rem] w-full relative z-0 ">
       <Tab.Group>
-        <Tab.List className=" landingDesktop:w-[16.25rem] flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black text-[1.25rem] font-light ">
+        <Tab.List className=" landingDesktop:w-[16.25rem] mobile:w-3/4 mobile:m-auto landingDesktop:m-0 flex flex-col border-r border-gray-200 pt-[1.375rem] text-center text-black mobile:text-[1rem] landingDesktop:text-[1.25rem] font-light ">
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }
@@ -21,7 +21,7 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }
@@ -31,7 +31,7 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }
@@ -41,7 +41,7 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }
@@ -51,7 +51,7 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }
@@ -61,7 +61,7 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }
@@ -71,7 +71,7 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none ",
+                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
                 selected && "bg-[#00A7E1]"
               )
             }

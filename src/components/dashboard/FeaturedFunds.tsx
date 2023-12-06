@@ -108,16 +108,16 @@ const data1 = [
 
 function FeaturedFunds() {
   return (
-    <div className="flex  landingDesktop:ml-[10px]  ">
+    <div className="flex mobile:flex-col landingDesktop:flex-row landingDesktop:ml-[10px]  ">
       <Tab.Group>
-        <Tab.List className="flex flex-col w-2/5 focus:outline-none outline-none border-0 landingDesktop:mr-[25px] ">
+        <Tab.List className="flex flex-col landingDesktop:w-2/5 focus:outline-none outline-none border-0 landingDesktop:mr-[25px] ">
           {data1.map((item) => (
             <Tab className="relative" as="div" key={item.name}>
               {({ selected }) => <Item selected={selected} item={item} />}
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className=" w-3/5 ">
+        <Tab.Panels className=" landingDesktop:w-3/5 ">
           {data1.map((item) => (
             <Tab.Panel key={item.name}>
               <ItemDescription item={item} />
