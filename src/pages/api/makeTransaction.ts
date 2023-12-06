@@ -28,7 +28,7 @@ import base58 from "bs58";
 const ADMIN_WALLET_ADDRESS = "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
 const USDC_TOKEN_ADDRESS = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
-const NETWORK = "https://mainnet.helius-rpc.com/?api-key=e848dd17-93e6-4a36-959c-e4911e1b503c";
+const NETWORK = "https://far-didi-fast-mainnet.helius-rpc.com/";
 const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
 const connection = new Connection(NETWORK, "confirmed");
 //const amount = new BigNumber(0.0001);
@@ -99,7 +99,7 @@ async function verifyTransaction(reference: PublicKey) {
     {
       recipient,
       amount,
-      splToken: undefined,
+      splToken: usdcAddress,
       reference,
       //memo
     },
