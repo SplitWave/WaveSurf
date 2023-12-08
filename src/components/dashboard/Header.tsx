@@ -1,4 +1,3 @@
-import { UserContext } from "@/context/UserContext";
 import Image from "next/image";
 import React, { Fragment, useContext, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
