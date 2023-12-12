@@ -1,20 +1,20 @@
-import Image from "next/image";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { ThreeDots } from "react-loader-spinner";
-import { ItemData } from "./Item";
-import { PiSealCheckFill } from "react-icons/pi";
-import { BsCircleFill, BsChevronDown } from "react-icons/bs";
-import { AiOutlineClose } from "react-icons/ai";
-import { Disclosure } from "@headlessui/react";
-import Modal from "@mui/material/Modal";
-import Slider from "rc-slider";
-import "rc-slider/assets/index.css";
+import Image from 'next/image';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { ThreeDots } from 'react-loader-spinner';
+import { ItemData } from './Item';
+import { PiSealCheckFill } from 'react-icons/pi';
+import { BsCircleFill, BsChevronDown } from 'react-icons/bs';
+import { AiOutlineClose } from 'react-icons/ai';
+import { Disclosure } from '@headlessui/react';
+import Modal from '@mui/material/Modal';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 import {
   getProvider,
   signTransaction,
   createTransferTransaction,
-} from "@/utils";
-import { Connection, Keypair, PublicKey } from "@solana/web3.js";
+} from '@/utils';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
   createQR,
   encodeURL,
@@ -23,19 +23,19 @@ import {
   TransferRequestURLFields,
   validateTransfer,
   ValidateTransferError,
-} from "@solana/pay";
-import { TLog } from "../../../types";
+} from '@solana/pay';
+import { TLog } from '../../../types';
 
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 
 export const ADMIN_WALLET_ADDRESS =
-  "7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt";
+  '7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt';
 const recipient = new PublicKey(ADMIN_WALLET_ADDRESS);
 //const USDC_TOKEN_ADDRESS = "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr";
-const USDC_TOKEN_ADDRESS = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const USDC_TOKEN_ADDRESS = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const usdcAddress = new PublicKey(USDC_TOKEN_ADDRESS);
-export const NETWORK = "https://far-didi-fast-mainnet.helius-rpc.com/";
-export const MAINNET = "https://far-didi-fast-mainnet.helius-rpc.com/";
+//export const NETWORK = 'https://far-didi-fast-mainnet.helius-rpc.com/';
+export const MAINNET = 'https://api.mainnet-beta.solana.com/';
 const connection = new Connection(MAINNET);
 
 export type ConnectedMethods =
@@ -57,13 +57,13 @@ interface Props {
 }
 
 const handleStyle = {
-  borderColor: "#00A7E1",
-  backgroundColor: "#00A7E1",
+  borderColor: '#00A7E1',
+  backgroundColor: '#00A7E1',
   height: 25,
   borderRadius: 15,
   width: 25,
 };
-const trackStyle = { height: 15, backgroundColor: "#00A7E1" };
+const trackStyle = { height: 15, backgroundColor: '#00A7E1' };
 const railStyle = { height: 15 };
 
 function ItemDescription({ item }: { item: ItemData }) {
@@ -85,8 +85,8 @@ function ItemDescription({ item }: { item: ItemData }) {
     splToken: usdcAddress,
     amount,
     reference,
-    label: "WaveSurf Store",
-    message: "Thank you for using WaveSurf",
+    label: 'WaveSurf Store',
+    message: 'Thank you for using WaveSurf',
   };
 
   // Encode the params into the format shown
@@ -105,19 +105,19 @@ function ItemDescription({ item }: { item: ItemData }) {
   }, [setLogs]);
 
   const handleGenerateClick = async () => {
-    const qr = createQR(url, 512, "transparent");
-    const qrBlob = await qr.getRawData("png");
+    const qr = createQR(url, 512, 'transparent');
+    const qrBlob = await qr.getRawData('png');
     if (!qrBlob) return;
     // 3 - Convert the blob to a base64 string (using FileReader) and set the QR code state
     const reader = new FileReader();
     reader.onload = (event) => {
-      if (typeof event.target?.result === "string") {
+      if (typeof event.target?.result === 'string') {
         setQrCode(event.target.result);
       }
     };
     reader.readAsDataURL(qrBlob);
     // 4 - Set the reference state
-    console.log("ref is", reference.toBase58());
+    console.log('ref is', reference.toBase58());
     setRef(reference);
     CheckPayment();
   };
@@ -128,10 +128,10 @@ function ItemDescription({ item }: { item: ItemData }) {
     const interval = setInterval(async () => {
       try {
         // Check if there is any transaction for the reference
-        console.log("checking for ref", reference.toBase58());
+        console.log('checking for ref', reference.toBase58());
         const refToValidate = reference;
         const signatureInfo = await findReference(connection, refToValidate, {
-          finality: "confirmed",
+          finality: 'confirmed',
         });
         // Validate that the transaction has the expected recipient, amount and SPL token
         await validateTransfer(
@@ -143,10 +143,10 @@ function ItemDescription({ item }: { item: ItemData }) {
             splToken: usdcAddress,
             reference: refToValidate,
           },
-          { commitment: "confirmed" }
+          { commitment: 'confirmed' }
         );
         //router.push('/shop/confirmed')
-        alert("Transaction verified");
+        alert('Transaction verified');
         setQrCode(undefined);
         setRef(undefined);
         setPaymentStatus(true);
@@ -169,7 +169,7 @@ function ItemDescription({ item }: { item: ItemData }) {
           // setIsModalOpen(false);
           return;
         }
-        console.error("Unknown error", e);
+        console.error('Unknown error', e);
         // alert("Transaction not verified");
         // setQrCode(undefined);
         // setRef(undefined);
@@ -189,27 +189,27 @@ function ItemDescription({ item }: { item: ItemData }) {
       // fail silently
     });
 
-    provider.on("connect", (publicKey: PublicKey) => {
+    provider.on('connect', (publicKey: PublicKey) => {
       createLog({
-        status: "success",
-        method: "connect",
+        status: 'success',
+        method: 'connect',
         message: `Connected to account ${publicKey.toBase58()}`,
       });
     });
 
-    provider.on("disconnect", () => {
+    provider.on('disconnect', () => {
       createLog({
-        status: "warning",
-        method: "disconnect",
-        message: "👋",
+        status: 'warning',
+        method: 'disconnect',
+        message: '👋',
       });
     });
 
-    provider.on("accountChanged", (publicKey: PublicKey | null) => {
+    provider.on('accountChanged', (publicKey: PublicKey | null) => {
       if (publicKey) {
         createLog({
-          status: "info",
-          method: "accountChanged",
+          status: 'info',
+          method: 'accountChanged',
           message: `Switched to account ${publicKey.toBase58()}`,
         });
       } else {
@@ -229,15 +229,15 @@ function ItemDescription({ item }: { item: ItemData }) {
          */
 
         createLog({
-          status: "info",
-          method: "accountChanged",
-          message: "Attempting to switch accounts.",
+          status: 'info',
+          method: 'accountChanged',
+          message: 'Attempting to switch accounts.',
         });
 
         provider.connect().catch((error: any) => {
           createLog({
-            status: "error",
-            method: "accountChanged",
+            status: 'error',
+            method: 'accountChanged',
             message: `Failed to re-connect: ${error.message}`,
           });
         });
@@ -260,22 +260,22 @@ function ItemDescription({ item }: { item: ItemData }) {
         connection
       );
       createLog({
-        status: "info",
-        method: "signTransaction",
+        status: 'info',
+        method: 'signTransaction',
         message: `Requesting signature for: ${JSON.stringify(transaction)}`,
       });
       const signedTransaction = await signTransaction(provider, transaction);
       createLog({
-        status: "success",
-        method: "signTransaction",
+        status: 'success',
+        method: 'signTransaction',
         message: `Transaction signed: ${JSON.stringify(signedTransaction)}`,
       });
-      console.log("signed transaction", `${JSON.stringify(signedTransaction)}`);
+      console.log('signed transaction', `${JSON.stringify(signedTransaction)}`);
       setIsModalOpen(false);
     } catch (error: any) {
       createLog({
-        status: "error",
-        method: "signTransaction",
+        status: 'error',
+        method: 'signTransaction',
         message: error.message as string,
       });
     }
@@ -304,14 +304,19 @@ function ItemDescription({ item }: { item: ItemData }) {
           ) : (
             <div className=" flex landingDesktop:flex-row items-center ">
               <div className=" relative landingDesktop:w-[5rem] landingDesktop:h-[5rem] mobile:w-[3.125rem] mobile:h-[3.125rem] ">
-                <Image src={item.img} alt="" layout="fill" objectFit="cover" />
+                <Image
+                  src={item.img}
+                  alt=""
+                  layout="fill"
+                  objectFit="cover"
+                />
               </div>
               <div className="  font-light mobile:ml-1 landingDesktop:ml-[10px] ">
                 <h1 className=" mobile:text-[0.875rem] landingDesktop:text-[1.375rem] text-center text-black ">
                   {item.name}
                 </h1>
                 <h1 className=" flex flex-row items-center landingDesktop:text-[1.125rem] mobile:text-[0.875rem] ml-[1.25rem] text-[#636363] ">
-                  WaveSurf{" "}
+                  WaveSurf{' '}
                   <PiSealCheckFill
                     color="#3897F0"
                     className=" ml-[0.625rem] "
@@ -335,10 +340,9 @@ function ItemDescription({ item }: { item: ItemData }) {
               </h1>
               <h1
                 className={` mobile:text-[0.75rem] landingDesktop:text-[1.125rem]  ${
-                  item.isNegative ? "text-[#DA1919]" : "text-[#2F982D]"
-                } `}
-              >
-                {item.percent}{" "}
+                  item.isNegative ? 'text-[#DA1919]' : 'text-[#2F982D]'
+                } `}>
+                {item.percent}{' '}
                 <span className=" text-[#636363] ">LAST WEEK</span>
               </h1>
             </div>
@@ -347,8 +351,7 @@ function ItemDescription({ item }: { item: ItemData }) {
         <div className=" w-full px-5 mobile:pt-3 landingDesktop:pt-[2.4375rem] flex flex-row justify-between items-center ">
           <button
             className=" mobile:w-[7.5rem] landingDesktop:w-[8.75rem] h-[3.8125rem] bg-[#00A7E1] rounded-[0.75rem] flex items-center justify-center "
-            onClick={openModal}
-          >
+            onClick={openModal}>
             <h1 className=" text-white text-center font-normal mobile:text-[1rem] landingDesktop:text-[1.375rem] ">
               BUY
             </h1>
@@ -364,7 +367,11 @@ function ItemDescription({ item }: { item: ItemData }) {
           ) : (
             <button className=" mobile:w-[10rem] landingDesktop:w-[11.25rem] h-[3.625rem] bg-gray-300 rounded-[2.4375rem] flex items-center justify-center ">
               <h1 className=" flex flex-row  items-center text-[#565656] text-center font-normal mobile:text-[1rem] landingDesktop:text-[18px] ">
-                <BsCircleFill color="#3FBFA0" className="mr-[0.625rem]" /> POOL
+                <BsCircleFill
+                  color="#3FBFA0"
+                  className="mr-[0.625rem]"
+                />{' '}
+                POOL
                 <span className=" font-light ml-[0.3125rem] ">OPEN</span>
               </h1>
             </button>
@@ -373,11 +380,10 @@ function ItemDescription({ item }: { item: ItemData }) {
       </div>
       <Disclosure
         as="div"
-        className=" w-full landingDesktop:h-full bg-white mobile:px-3 mobile:py-3 landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[0.9375rem] mobile:mt-5  mobile:rounded-md landingDesktop:rounded-none "
-      >
+        className=" w-full landingDesktop:h-full bg-white mobile:px-3 mobile:py-3 landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[0.9375rem] mobile:mt-5  mobile:rounded-md landingDesktop:rounded-none ">
         <Disclosure.Button className=" w-full flex flex-row items-center justify-between text-black ">
           <h1 className=" font-light mobile:text-[1.25rem] landingDesktop:text-[1.5rem] ">
-            Fund details{" "}
+            Fund details{' '}
           </h1>
           <BsChevronDown />
         </Disclosure.Button>
@@ -413,7 +419,9 @@ function ItemDescription({ item }: { item: ItemData }) {
           </table>
         </Disclosure.Panel>
       </Disclosure>
-      <Modal open={IsModalOpen} onClose={closeModal}>
+      <Modal
+        open={IsModalOpen}
+        onClose={closeModal}>
         <div className=" landingDesktop:w-[36rem] bg-white rounded-[0.6875rem] shadow-md mobile:mx-3   landingDesktop:m-auto py-[2.1875rem] px-[3rem] ">
           <div className=" flex flex-row items-center justify-center text-black w-full  ">
             <h1 className=" mobile:text-[1.25rem] landingDesktop:text-[1.5rem] font-normal text-center  ">
@@ -454,9 +462,8 @@ function ItemDescription({ item }: { item: ItemData }) {
               />
               <label
                 htmlFor="terms"
-                className="ml-2 mobile:text-[1rem] landingDesktop:text-[1.25rem] font-normal text-black text-center "
-              >
-                I accept the <span className=" text-[#00A7E1] ">terms</span> &{" "}
+                className="ml-2 mobile:text-[1rem] landingDesktop:text-[1.25rem] font-normal text-black text-center ">
+                I accept the <span className=" text-[#00A7E1] ">terms</span> &{' '}
                 <span className=" text-[#00A7E1] ">conditions</span> of the pool
               </label>
             </div>
@@ -465,7 +472,7 @@ function ItemDescription({ item }: { item: ItemData }) {
             <div className=" w-[12.5rem] h-[12.5rem] m-auto ">
               <Image
                 src={qrCode}
-                style={{ position: "relative", background: "white" }}
+                style={{ position: 'relative', background: 'white' }}
                 alt="QR Code"
                 width={200}
                 height={200}
@@ -484,8 +491,7 @@ function ItemDescription({ item }: { item: ItemData }) {
           {!qrCode && (
             <button
               className=" mt-[1.9375rem] w-full h-[3.75rem] shadow-md flex flex-row items-center justify-center bg-[#F4F4F4] rounded-[0.25rem] "
-              onClick={handleGenerateClick}
-            >
+              onClick={handleGenerateClick}>
               <h1 className=" text-black font-medium ">Pay with</h1>
               <div className=" relative w-[3.75rem] h-[1.125rem] ml-[0.375rem] ">
                 <Image
@@ -501,21 +507,20 @@ function ItemDescription({ item }: { item: ItemData }) {
           {!qrCode && (
             <button
               style={{
-                marginTop: "1.0625rem",
-                width: "100%",
-                height: "3.75rem",
-                boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#9036D9",
-                borderRadius: "0.25rem",
-                transition: "background-color 0.3s",
+                marginTop: '1.0625rem',
+                width: '100%',
+                height: '3.75rem',
+                boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#9036D9',
+                borderRadius: '0.25rem',
+                transition: 'background-color 0.3s',
               }}
               className=" hover:bg-purple-200 focus:bg-purple-300 "
-              onClick={handleSignTransaction}
-            >
+              onClick={handleSignTransaction}>
               <h1 className=" text-white font-medium ">Pay with</h1>
               <div className=" relative w-[1.875rem] h-[1.5625rem] ml-[0.375rem] ">
                 <Image
