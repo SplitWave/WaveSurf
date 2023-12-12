@@ -6,7 +6,7 @@ import ItemDescription from "./ItemDescription";
 const data1 = [
   {
     img: "/assets/PNG/crown.png",
-    name: "PhotoFinish Fund",
+    name: "PhotoFinish Stable",
     price: "$15900.00",
     days: "30 days",
     percent: "-9.42 (3.62%)",
