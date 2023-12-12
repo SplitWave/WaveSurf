@@ -34,7 +34,7 @@ const Dashboard = () => {
         >
           <RiMenu3Line size={35} />
         </div>
-        <div className=" flex w-full h-full landingDesktop:pl-[2.0625rem] landingDesktop:pt-[2.125rem] ">
+        <div className=" flex w-full h-full landingDesktop:pl-[2.0625rem] landingDesktop:py-[2.125rem] ">
           <Tab.Group vertical>
             {!sidebarOpen && (
               <Tab.List className=" landingDesktop:flex mobile:hidden flex-col w-[7.625rem] p-[1.75rem] items-center h-[28.125rem] rounded-[2.125rem] shadow-md bg-white text-black font-extralight ">

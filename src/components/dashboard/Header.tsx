@@ -1,10 +1,10 @@
-import Image from "next/image";
-import React, { Fragment, useContext, useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { AiOutlineMenu } from "react-icons/ai";
-import { Menu, Transition } from "@headlessui/react";
-import { BiLogOut } from "react-icons/bi";
-import { useWeb3Auth } from "@/context/Web3AuthContext";
+import Image from 'next/image';
+import React, { Fragment, useContext, useState } from 'react';
+import { FaChevronDown } from 'react-icons/fa';
+import { AiOutlineMenu } from 'react-icons/ai';
+import { Menu, Transition } from '@headlessui/react';
+import { BiLogOut } from 'react-icons/bi';
+import { useWeb3Auth } from '@/context/Web3AuthContext';
 
 function Header() {
   const { user, web3auth, setProvider, setLoggedIn, address } = useWeb3Auth();
@@ -16,7 +16,7 @@ function Header() {
 
   const logout = async () => {
     if (!web3auth) {
-      uiConsole("web3auth not initialized yet");
+      uiConsole('web3auth not initialized yet');
       return;
     }
     await web3auth.logout();
@@ -25,7 +25,7 @@ function Header() {
   };
 
   function uiConsole(...args: any[]): void {
-    const el = document.querySelector("#console>p");
+    const el = document.querySelector('#console>p');
     if (el) {
       el.innerHTML = JSON.stringify(args || {}, null, 2);
     }
@@ -54,13 +54,12 @@ function Header() {
       </div>
       <div className=" mobile:hidden landingDesktop:flex landingDesktop:flex-row landingDesktop:justify-between mobile:mt-[0.9375rem] landingDesktop:mt-[0rem] mobile:ml-[1.25rem] landingDesktop:ml-[0rem] ">
         <h1 className="  flex flex-row items-center  landingDesktop:ml-[0.625rem] landingDesktop:mr-[2.875rem] mobile:text-[1.375rem] landingDesktop:text-[1.75rem] font-light  text-[#605C5C] ">
-          Account value $0.00{" "}
+          Account value $0.00{' '}
           <FaChevronDown className=" w-[1rem] h-[1rem] ml-[0.3125rem] " />
         </h1>
         <Menu
           as="div"
-          className="relative inline-block landingDesktop:text-left"
-        >
+          className="relative inline-block landingDesktop:text-left">
           <div>
             <Menu.Button className="  landingDesktop:border-l-[0.125rem] landingDesktop:border-l-[#C0CCDA] landingDesktop:px-[1.25rem]  flex flex-row hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 ">
               <div className="">
@@ -103,27 +102,33 @@ function Header() {
             enterTo="transform opacity-100 scale-100"
             leave="transition ease-in duration-75"
             leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
+            leaveTo="transform opacity-0 scale-95">
             <Menu.Items
-              className=" absolute w-full p-4 rounded-[0.625rem] bg-gray-100 "
-              as="div"
-            >
-              <Menu.Item className="w-full" as="div">
-                {address && (
-                  <h1 className=" text-black w-full landingDesktop:flex-start landingDesktop:text-[0.75rem]  font-light landingDesktop:ml-[0.3125rem] mb-[0.625rem] ">
-                    {address?.[0]}
-                  </h1>
-                )}
-              </Menu.Item>
-              <Menu.Item
-                className=" font-normal  text-black  flex flex-row  items-center justify-start "
-                as="div"
-                onClick={logout}
-              >
-                <BiLogOut className=" landingDesktop:w-[1.5rem] landingDesktop:h-[1.5rem] mobile:w-[1.125rem] mobile:h-[1.125rem] " />
-                <h1 className=" ml-[0.625rem] text-[1rem] ">Log out</h1>
-              </Menu.Item>
+              className=" absolute w-full p-4 rounded-[0.625rem] bg-gray-100 origin-top-right divide-y divide-gray-100  shadow-lg ring-1 ring-black/5 focus:outline-none "
+              as="div">
+              <div>
+                <Menu.Item
+                  className="w-full"
+                  as="div">
+                  {address && (
+                    <h1 className=" text-black w-full landingDesktop:flex-start landingDesktop:text-[0.75rem]  font-light landingDesktop:ml-[0.3125rem] mb-[0.625rem] ">
+                      {address?.[0]}
+                    </h1>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <div
+                      className=" font-normal  text-black  flex flex-row  items-center justify-start "
+                      onClick={() => {
+                        logout();
+                      }}>
+                      <BiLogOut className=" landingDesktop:w-[1.5rem] landingDesktop:h-[1.5rem] mobile:w-[1.125rem] mobile:h-[1.125rem] " />
+                      <h1 className=" ml-[0.625rem] text-[1rem] ">Log out</h1>
+                    </div>
+                  )}
+                </Menu.Item>
+              </div>
             </Menu.Items>
           </Transition>
         </Menu>
@@ -132,13 +137,12 @@ function Header() {
       {isOpen && (
         <div className="  mobile:flex landingDesktop:hidden flex-col landingDesktop:justify-between mobile:mt-[0.9375rem] landingDesktop:mt-[0rem] mobile:ml-[1.25rem] landingDesktop:ml-[0rem] ">
           <h1 className="  flex flex-row items-center  landingDesktop:ml-[0.625rem] landingDesktop:mr-[2.875rem] mobile:text-[1rem] landingDesktop:text-[1.75rem] font-light  text-[#605C5C] ">
-            Account value $0.00{" "}
+            Account value $0.00{' '}
             <FaChevronDown className=" w-[1rem] h-[1rem] ml-[0.3125rem] " />
           </h1>
           <Menu
             as="div"
-            className="relative inline-block landingDesktop:text-left"
-          >
+            className="relative inline-block landingDesktop:text-left">
             <div>
               <Menu.Button className="  landingDesktop:border-l-[0.125rem] landingDesktop:border-l-[#C0CCDA] landingDesktop:px-[1.25rem]  flex flex-row hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 ">
                 <div className="">
@@ -183,13 +187,13 @@ function Header() {
               enterTo="transform opacity-100 scale-100"
               leave="transition ease-in duration-75"
               leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
+              leaveTo="transform opacity-0 scale-95">
               <Menu.Items
                 className=" absolute w-5/6 p-4 rounded-[0.625rem] bg-gray-100 "
-                as="div"
-              >
-                <Menu.Item className="w-full" as="div">
+                as="div">
+                <Menu.Item
+                  className="w-full"
+                  as="div">
                   {address && (
                     <h1 className=" text-black w-full flex-start  text-[0.625rem] font-light landingDesktop:ml-[0.625rem] mb-[0.625rem] ">
                       {address?.[0]}
@@ -199,8 +203,7 @@ function Header() {
                 <Menu.Item
                   className=" font-normal  text-black  flex flex-row  items-center justify-start "
                   as="div"
-                  onClick={logout}
-                >
+                  onClick={logout}>
                   <BiLogOut className=" landingDesktop:w-[1.5rem] landingDesktop:h-[1.5rem] mobile:w-[1.125rem] mobile:h-[1.125rem] " />
                   <h1 className=" ml-[0.625rem] text-[1rem] ">Log out</h1>
                 </Menu.Item>
