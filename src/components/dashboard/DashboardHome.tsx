@@ -1,7 +1,8 @@
-import React from "react";
-import { Tab } from "@headlessui/react";
-import { classNames } from "@/pages/dashboard";
-import FeaturedFunds from "./FeaturedFunds";
+import React from 'react';
+import { Tab } from '@headlessui/react';
+import { classNames } from '@/pages/dashboard';
+import FeaturedFunds from './FeaturedFunds';
+import NFTGallery from './NFTGallery';
 
 function DashboardHome() {
   return (
@@ -11,76 +12,80 @@ function DashboardHome() {
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>⭐ Featured Funds..</h1>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>📈 Top Funds</h1>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>📉 Top Losers</h1>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>💖 Most Owned</h1>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>🌊 New on WS</h1>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>📖 Pool Open</h1>
           </Tab>
           <Tab
             className={({ selected }) =>
               classNames(
-                "py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ",
-                selected && "bg-[#00A7E1]"
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
               )
-            }
-          >
+            }>
             <h1>📂 Create</h1>
+          </Tab>
+          <Tab
+            className={({ selected }) =>
+              classNames(
+                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
+                selected && 'bg-[#00A7E1]'
+              )
+            }>
+            <h1>📂 NFT Gallery</h1>
           </Tab>
         </Tab.List>
         <Tab.Panels className="p-3 w-full ">
-          <Tab.Panel className="relative" as="div">
+          <Tab.Panel
+            className="relative"
+            as="div">
             <FeaturedFunds />
           </Tab.Panel>
           <Tab.Panel>Content 2</Tab.Panel>
@@ -89,6 +94,9 @@ function DashboardHome() {
           <Tab.Panel>Content 5</Tab.Panel>
           <Tab.Panel>Content 6</Tab.Panel>
           <Tab.Panel>Content 7</Tab.Panel>
+          <Tab.Panel>
+            <NFTGallery />
+          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>
