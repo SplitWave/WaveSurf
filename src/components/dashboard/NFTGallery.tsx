@@ -107,7 +107,7 @@ const nfts = [
 
 const NFTGallery = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
       {nfts.map((nft) => (
         <div
           key={nft.id}
@@ -121,7 +121,7 @@ const NFTGallery = () => {
               className="rounded-lg"
             />
           </div>
-          <p className="text-center font-medium mt-2">{nft.name}</p>
+          <p className="text-center font-normal mt-2 text-sm ">{nft.name}</p>
         </div>
       ))}
     </div>

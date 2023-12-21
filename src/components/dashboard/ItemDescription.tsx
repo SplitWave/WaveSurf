@@ -27,6 +27,7 @@ import {
 import { TLog } from '../../../types';
 
 import BigNumber from 'bignumber.js';
+import NFTGallery from './NFTGallery';
 
 export const ADMIN_WALLET_ADDRESS =
   '7xoh3GNCVEZgT7VeKB35bTBZuzm86XNfPVzr537zBzWt';
@@ -417,6 +418,19 @@ function ItemDescription({ item }: { item: ItemData }) {
               ))}
             </tbody>
           </table>
+        </Disclosure.Panel>
+      </Disclosure>
+      <Disclosure
+        as="div"
+        className=" w-full landingDesktop:h-full bg-white mobile:px-3 mobile:py-3 landingDesktop:py-[1.4375rem] landingDesktop:px-[2.0625rem] landingDesktop:mt-[0.9375rem] mobile:mt-5  mobile:rounded-md landingDesktop:rounded-none ">
+        <Disclosure.Button className=" w-full flex flex-row items-center justify-between text-black ">
+          <h1 className=" font-light mobile:text-[1.25rem] landingDesktop:text-[1.5rem] ">
+            NFT Gallery
+          </h1>
+          <BsChevronDown />
+        </Disclosure.Button>
+        <Disclosure.Panel className=" text-black ">
+          <NFTGallery />
         </Disclosure.Panel>
       </Disclosure>
       <Modal

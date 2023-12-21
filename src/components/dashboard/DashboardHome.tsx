@@ -72,15 +72,6 @@ function DashboardHome() {
             }>
             <h1>📂 Create</h1>
           </Tab>
-          <Tab
-            className={({ selected }) =>
-              classNames(
-                'py-2 px-1 border-b border-gray-200 focus:outline-none mobile:rounded-xl ',
-                selected && 'bg-[#00A7E1]'
-              )
-            }>
-            <h1>📂 NFT Gallery</h1>
-          </Tab>
         </Tab.List>
         <Tab.Panels className="p-3 w-full ">
           <Tab.Panel
@@ -94,9 +85,6 @@ function DashboardHome() {
           <Tab.Panel>Content 5</Tab.Panel>
           <Tab.Panel>Content 6</Tab.Panel>
           <Tab.Panel>Content 7</Tab.Panel>
-          <Tab.Panel>
-            <NFTGallery />
-          </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
     </div>
